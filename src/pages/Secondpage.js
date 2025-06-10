@@ -1,11 +1,10 @@
-// src/pages/Secondpage.js
 import React from 'react';
+import SubdivisionSelector from '../components/SubdivisionSelector';
 
 export default function Secondpage() {
   return (
-    <div>
-      <h1>Hello, World!</h1>
-      {/* Add more content here if you like */}
+    <div className="App">
+      <SubdivisionSelector />
     </div>
   );
 }
