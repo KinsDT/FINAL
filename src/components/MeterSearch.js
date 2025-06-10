@@ -93,8 +93,7 @@ export default function MeterSearch() {
     vc_avg_percent: "Voltage Phase C Avg (%)",
     vc_max_percent: "Voltage Phase C Max (%)",
     vu_percent: "Voltage Unbalance (%)",
-    datetime: "Date Time",
-    Time Stamp: "Time Stamp"
+    datetime: "Date Time"
   };
 
   useEffect(() => {
