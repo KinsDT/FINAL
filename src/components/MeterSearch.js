@@ -11,7 +11,6 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import '../styles/MeterSearch.css';
- // Import the CSS file
 
 ChartJS.register(
   CategoryScale,
@@ -50,9 +49,9 @@ export default function MeterSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("table");
-  const [xAxis, setXAxis] = useState("");
-  const [yAxis, setYAxis] = useState("");
   const [selectedMeterIds, setSelectedMeterIds] = useState([]);
+  // Multi-graph state:
+  const [graphs, setGraphs] = useState([{ xAxis: "", yAxis: "" }]);
 
   const tableDisplayNames = {
     daily_qos_undervoltage: "Under-Voltage",
@@ -163,16 +162,14 @@ export default function MeterSearch() {
         });
         setData(combinedData);
 
-        // Set default axes for graph if available
+        // Set default axes for all graphs
         const cols = Object.keys(combinedData[0]);
         let defaultX =
           cols.find(c => c.toLowerCase() === "time stamp".toLowerCase()) ||
           cols.find(c => c.toLowerCase() === "datetime") ||
           cols[0];
         let defaultY = cols.find(col => col !== defaultX) || cols[1] || "";
-
-        setXAxis(defaultX);
-        setYAxis(defaultY);
+        setGraphs([{ xAxis: defaultX, yAxis: defaultY }]);
       }
     } catch (err) {
       setError(err.message || "Unknown error");
@@ -229,17 +226,9 @@ export default function MeterSearch() {
 
   const columns = getColumnsByNonNullCount(data);
 
-  // Prepare chart data when in graph mode and both axes are chosen
-  const chartData = useMemo(() => {
-    if (
-      viewMode !== "graph" ||
-      !xAxis ||
-      !yAxis ||
-      !data.length ||
-      !selectedMeterIds.length
-    )
-      return null;
-
+  // Chart data generator for each graph
+  const getChartData = (xAxis, yAxis) => {
+    if (!xAxis || !yAxis || !data.length || !selectedMeterIds.length) return null;
     const grouped = {};
     data.forEach((row) => {
       const id = row.meter_id || "UNKNOWN";
@@ -247,7 +236,6 @@ export default function MeterSearch() {
       if (!grouped[id]) grouped[id] = [];
       grouped[id].push(row);
     });
-
     const datasets = Object.entries(grouped).map(([id, rows]) => {
       const sorted = [...rows].sort((a, b) => {
         if (xAxis === "date") {
@@ -279,9 +267,8 @@ export default function MeterSearch() {
         tension: 0.2,
       };
     });
-
     return { datasets };
-  }, [viewMode, xAxis, yAxis, data, selectedMeterIds]);
+  };
 
   return (
     <div className="page">
@@ -416,82 +403,123 @@ export default function MeterSearch() {
               </div>
             )}
 
+            {/* Multi-graph controls */}
             {data.length > 0 && (
-              <div className="controls">
-                <select
-                  value={xAxis}
-                  onChange={(e) => setXAxis(e.target.value)}
-                  className="select"
-                >
-                  <option value="">Select X-Axis</option>
-                  {columns.map((col) => (
-                    <option key={col} value={col}>
-                      {columnDisplayNames[col] || col}
-                    </option>
-                  ))}
-                </select>
+              <div>
+                {graphs.map((graph, idx) => (
+                  <div key={idx} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                    <select
+                      value={graph.xAxis}
+                      onChange={e => {
+                        const newGraphs = [...graphs];
+                        newGraphs[idx].xAxis = e.target.value;
+                        setGraphs(newGraphs);
+                      }}
+                      className="select"
+                    >
+                      <option value="">Select X-Axis</option>
+                      {columns.map((col) => (
+                        <option key={col} value={col}>
+                          {columnDisplayNames[col] || col}
+                        </option>
+                      ))}
+                    </select>
 
-                <select
-                  value={yAxis}
-                  onChange={(e) => setYAxis(e.target.value)}
-                  className="select"
+                    <select
+                      value={graph.yAxis}
+                      onChange={e => {
+                        const newGraphs = [...graphs];
+                        newGraphs[idx].yAxis = e.target.value;
+                        setGraphs(newGraphs);
+                      }}
+                      className="select"
+                    >
+                      <option value="">Select Y-Axis</option>
+                      {columns.map((col) => (
+                        <option key={col} value={col}>
+                          {columnDisplayNames[col] || col}
+                        </option>
+                      ))}
+                    </select>
+                    {graphs.length > 1 && (
+                      <button
+                        className="button button-danger"
+                        onClick={() => setGraphs(graphs.filter((_, i) => i !== idx))}
+                        style={{ marginLeft: 8 }}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  className="button"
+                  onClick={() =>
+                    setGraphs(prevGraphs => {
+                      const firstXAxis = prevGraphs.length > 0 ? prevGraphs[0].xAxis : "";
+                      return [...prevGraphs, { xAxis: firstXAxis, yAxis: "" }];
+                    })
+                  }
+                  style={{ marginTop: 8 }}
                 >
-                  <option value="">Select Y-Axis</option>
-                  {columns.map((col) => (
-                    <option key={col} value={col}>
-                      {columnDisplayNames[col] || col}
-                    </option>
-                  ))}
-                </select>
+                  Add Another Graph
+                </button>
               </div>
             )}
 
-            {xAxis && yAxis && chartData && (
-              <Line
-                data={chartData}
-                options={{
-                  responsive: true,
-                  plugins: {
-                    legend: { position: "top", labels: { color: "#e0e0e0" } },
-                    title: {
-                      display: true,
-                      text: `${columnDisplayNames[yAxis] || yAxis} vs. ${columnDisplayNames[xAxis] || xAxis}`,
-                      color: "#e0e0e0",
-                    },
-                    tooltip: { mode: "index", intersect: false },
-                  },
-                  scales: {
-                    x: {
-                      ticks: { color: "#e0e0e0" },
-                      grid: { color: "#444" },
-                      title: {
-                        display: true,
-                        text: columnDisplayNames[xAxis] || xAxis,
-                        color: "#e0e0e0",
-                      },
-                    },
-                    y: {
-                      ticks: { color: "#e0e0e0" },
-                      grid: { color: "#444" },
-                      title: {
-                        display: true,
-                        text: columnDisplayNames[yAxis] || yAxis,
-                        color: "#e0e0e0",
-                      },
-                    },
-                  },
-                }}
-              />
-            )}
+            {/* Render all graphs side by side */}
+            <div style={{ display: "flex", gap: 24, marginTop: 24, flexWrap: "wrap" }}>
+              {graphs.map((graph, idx) => {
+                const chartData = getChartData(graph.xAxis, graph.yAxis);
+                return (
+                  <div key={idx} style={{ flex: 1, minWidth: 400 }}>
+                    {graph.xAxis && graph.yAxis && chartData ? (
+                      <Line
+                        data={chartData}
+                        options={{
+                          responsive: true,
+                          plugins: {
+                            legend: { position: "top", labels: { color: "#e0e0e0" } },
+                            title: {
+                              display: true,
+                              text: `${columnDisplayNames[graph.yAxis] || graph.yAxis} vs. ${columnDisplayNames[graph.xAxis] || graph.xAxis}`,
+                              color: "#e0e0e0",
+                            },
+                            tooltip: { mode: "index", intersect: false },
+                          },
+                          scales: {
+                            x: {
+                              ticks: { color: "#e0e0e0" },
+                              grid: { color: "#444" },
+                              title: {
+                                display: true,
+                                text: columnDisplayNames[graph.xAxis] || graph.xAxis,
+                                color: "#e0e0e0",
+                              },
+                            },
+                            y: {
+                              ticks: { color: "#e0e0e0" },
+                              grid: { color: "#444" },
+                              title: {
+                                display: true,
+                                text: columnDisplayNames[graph.yAxis] || graph.yAxis,
+                                color: "#e0e0e0",
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    ) : (
+                      <p style={{ color: "#bbb" }}>Select axes to display graph</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
 
             {data.length === 0 && (
               <p className="noData">
                 No data to plot. Switch to Table View or fetch data.
-              </p>
-            )}
-            {data.length > 0 && (!xAxis || !yAxis) && (
-              <p className="noData">
-                Please select both X-axis and Y-axis to see the graph.
               </p>
             )}
           </>

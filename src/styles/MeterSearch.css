@@ -80,6 +80,18 @@
   cursor: not-allowed;
 }
 
+.button-danger {
+  background-color: #c62828;
+  color: #fff;
+  border: none;
+}
+.button-danger:hover:not(:disabled) {
+  background-color: #a31515;
+}
+
+
+
+
 /* Error Message */
 .error {
   color: #ff5555;
