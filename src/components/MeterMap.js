@@ -142,6 +142,33 @@ const MeterMap = ({
       >
         For Detailed Meter-wise Dashboard: Click Here
      </button>
+     <button
+        onClick={() => //{navigate('/dashboard') 
+          navigate('/Secondpage')
+          // Replace with your navigation logic
+          // For example: window.location.href = '/dashboard';
+          // Or with React Router: navigate('/dashboard');
+        }
+        style={{
+          position: 'absolute',
+          bottom: '0px',
+          left: '0px',
+          zIndex: 1000,
+          padding: '10px 20px',
+          backgroundColor: '#1890ff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontWeight: 'bold',
+          fontSize: '16px',
+          transition: 'background-color 0.2s'
+        }}
+        onMouseOver={(e) => e.target.style.backgroundColor='#00008b'}
+        onMouseOut={(e) => e.target.style.backgroundColor='#1890ff'}
+      >
+        For Detailed Area-wise Dashboard: Click Here
+     </button>
     </div>
   );
 };
