@@ -1,0 +1,22 @@
+/* src/styles/SubdivisionSelector.css */
+
+.subdivision-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.combined-data-box {
+  width: 350px;
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.pie-charts-box {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 300px;
+}
