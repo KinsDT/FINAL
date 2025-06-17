@@ -3,7 +3,9 @@ import { Select, Card, Divider, Row, Col, Statistic } from "antd";
 import useMeterData from "../hooks/useMeterData";
 import PhasePieChart from "./PhasePieChart";
 import "../styles/SubdivisionSelector.css";
-
+import VoltageInterruptionsAggregation from "./VoltageInterruptionsAggregation";
+import PowerQualityAggregation from "./PowerQualityAggregation";
+import QualityOfSupplyAggregation from "./QualityOfSupplyAggregation";
 const { Option } = Select;
 
 const parameters = [
@@ -83,436 +85,6 @@ function CombinedDataBox() {
   );
 }
 
-// Voltage Interruptions Aggregation Component
-function VoltageInterruptionsAggregation({ data }) {
-  if (!data || data.length === 0) return <div>No data available</div>;
-
-  // Filter for non-zero cut_duration values
-  const cutDurationFiltered = data.filter(
-    (row) => row.cut_duration != null && parseFloat(row.cut_duration) !== 0
-  );
-
-  // Filter for non-zero outage_duration values
-  const outageDurationFiltered = data.filter(
-    (row) => row.outage_duration != null && parseFloat(row.outage_duration) !== 0 &&parseFloat(row.outage_duration) <1440//testing 1 day
-  );
-
-  // Calculate average cut_duration
-  const avgCutDuration =
-    cutDurationFiltered.length > 0
-      ? cutDurationFiltered.reduce((sum, row) => sum + parseFloat(row.cut_duration), 0) /
-        cutDurationFiltered.length
-      : 0;
-
-  // Calculate average outage_duration
-  const avgOutageDuration =
-    outageDurationFiltered.length > 0
-      ? outageDurationFiltered.reduce((sum, row) => sum + parseFloat(row.outage_duration), 0) /
-        outageDurationFiltered.length
-      : 0;
-
-  // Calculate maximum cut_duration
-  const maxCutDuration =
-    data.length > 0
-      ? Math.max(...data.map(row => parseFloat(row.cut_duration) || 0))
-      : 0;
-
-  // Calculate maximum outage_duration
-  const maxOutageDuration =
-    outageDurationFiltered.length > 0
-      ? Math.max(...outageDurationFiltered.map(row => parseFloat(row.outage_duration) || 0))
-      : 0;
-
-  // Calculate total counts for additional context
-  const totalCutCount = cutDurationFiltered.length;
-  const totalOutageCount = outageDurationFiltered.length;
-
-  return (
-    <div style={{ marginTop: "16px" }}>
-      <h3>Voltage Interruptions - Aggregated Data</h3>
-      
-      {/* Cut Duration Section */}
-      <Card title="Cut Duration Analysis" style={{ marginBottom: "16px"}}>
-        <Row gutter={16}>
-          <Col span={8}>
-            <Statistic 
-              title="Average Cut Duration" 
-              value={avgCutDuration.toFixed(2)}
-              suffix="minutes"   
-            />
-          </Col>
-          <Col span={8}>
-            <Statistic 
-              title="Maximum Cut Duration" 
-              value={maxCutDuration.toFixed(2)} 
-              suffix="minutes"
-            />
-          </Col>
-          <Col span={8}>
-            <Statistic 
-              title="Total Cut Count" 
-              value={totalCutCount} 
-              suffix="events"
-            />
-          </Col>
-        </Row>
-      </Card>
-
-      {/* Outage Duration Section */}
-      <Card title="Outage Duration Analysis" style={{ marginBottom: "16px" }}>
-        <Row gutter={16}>
-          <Col span={8}>
-            <Statistic 
-              title="Average Outage Duration" 
-              value={avgOutageDuration.toFixed(2)} 
-              suffix="minutes"
-            />
-          </Col>
-          <Col span={8}>
-            <Statistic 
-              title="Maximum Outage Duration" 
-              value={maxOutageDuration.toFixed(2)} 
-              suffix="minutes"
-            />
-          </Col>
-          <Col span={8}>
-            <Statistic 
-              title="Total Outage Count" 
-              value={totalOutageCount} 
-              suffix="events"
-            />
-          </Col>
-        </Row>
-      </Card>
-
-      {/* Summary Section */}
-      <Card title="Summary Statistics">
-        <Row gutter={16}>
-          <Col span={12}>
-            <Statistic 
-              title="Records with Cut Events" 
-              value={cutDurationFiltered.length} 
-              suffix={`of ${data.length}`}
-            />
-          </Col>
-          <Col span={12}>
-            <Statistic 
-              title="Records with Outage Events" 
-              value={outageDurationFiltered.length} 
-              suffix={`of ${data.length}`}
-            />
-          </Col>
-        </Row>
-      </Card>
-    </div>
-  );
-}
-
-// Power Quality Aggregation Component
-function PowerQualityAggregation({ data }) {
-  if (!data || data.length === 0) return <div>No data available</div>;
-
-  // Filter for non-zero voltage phase values
-  const voltagePhaseFiltered = data.filter(
-    (row) =>
-      row.voltage_pha != null && row.voltage_pha !== 0 &&
-      row.voltage_phb != null && row.voltage_phb !== 0 &&
-      row.voltage_phc != null && row.voltage_phc !== 0
-  );
-
-  // Filter for non-zero symmetrical components
-  const v1Filtered = data.filter((row) => row.v1 != null && row.v1 !== 0);
-  const v2Filtered = data.filter((row) => row.v2 != null && row.v2 !== 0);
-  const v0Filtered = data.filter((row) => row.v0 != null && row.v0 !== 0);
-
-  // Filter for non-zero voltage unbalance factor
-  const vufFiltered = data.filter((row) => row.vuf != null && row.vuf !== 0);
-
-  // Calculate averages for voltage phases
-  const avgVoltagePhA =
-    voltagePhaseFiltered.length > 0
-      ? voltagePhaseFiltered.reduce((sum, row) => sum + row.voltage_pha, 0) /
-        voltagePhaseFiltered.length
-      : 0;
-  const avgVoltagePhB =
-    voltagePhaseFiltered.length > 0
-      ? voltagePhaseFiltered.reduce((sum, row) => sum + row.voltage_phb, 0) /
-        voltagePhaseFiltered.length
-      : 0;
-  const avgVoltagePhC =
-    voltagePhaseFiltered.length > 0
-      ? voltagePhaseFiltered.reduce((sum, row) => sum + row.voltage_phc, 0) /
-        voltagePhaseFiltered.length
-      : 0;
-
-  // Calculate averages for symmetrical components
-  const avgV1 =
-    v1Filtered.length > 0
-      ? v1Filtered.reduce((sum, row) => sum + row.v1, 0) / v1Filtered.length
-      : 0;
-  const avgV2 =
-    v2Filtered.length > 0
-      ? v2Filtered.reduce((sum, row) => sum + row.v2, 0) / v2Filtered.length
-      : 0;
-  const avgV0 =
-    v0Filtered.length > 0
-      ? v0Filtered.reduce((sum, row) => sum + row.v0, 0) / v0Filtered.length
-      : 0;
-
-  // Calculate average for voltage unbalance factor
-  const avgVuf =
-    vufFiltered.length > 0
-      ? vufFiltered.reduce((sum, row) => sum + row.vuf, 0) / vufFiltered.length
-      : 0;
-
-  return (
-    <div style={{ marginTop: "16px" }}>
-      <h3>Power Quality - Aggregated Data</h3>
-      
-      {/* Voltage Phase Section */}
-      <Card title="Phase Voltage Averages (V)" style={{ marginBottom: "16px" }}>
-        <Row gutter={16}>
-          <Col span={8}>
-            <Statistic title="Average voltage_pha" value={avgVoltagePhA.toFixed(2)} suffix="V" />
-          </Col>
-          <Col span={8}>
-            <Statistic title="Average voltage_phb" value={avgVoltagePhB.toFixed(2)} suffix="V" />
-          </Col>
-          <Col span={8}>
-            <Statistic title="Average voltage_phc" value={avgVoltagePhC.toFixed(2)} suffix="V" />
-          </Col>
-        </Row>
-      </Card>
-
-      {/* Symmetrical Components Section */}
-      <Card title="Symmetrical Components Averages (V)" style={{ marginBottom: "16px" }}>
-        <Row gutter={16}>
-          <Col span={8}>
-            <Statistic title="Average v1 (Positive)" value={avgV1.toFixed(2)} suffix="V" />
-          </Col>
-          <Col span={8}>
-            <Statistic title="Average v2 (Negative)" value={avgV2.toFixed(2)} suffix="V" />
-          </Col>
-          <Col span={8}>
-            <Statistic title="Average v0 (Zero)" value={avgV0.toFixed(2)} suffix="V" />
-          </Col>
-        </Row>
-      </Card>
-
-      {/* Voltage Unbalance Factor Section */}
-      <Card title="Voltage Unbalance Factor">
-        <Row gutter={16}>
-          <Col span={24}>
-            <Statistic title="Average VUF" value={avgVuf.toFixed(4)} />
-          </Col>
-        </Row>
-      </Card>
-    </div>
-  );
-}
-
-// Quality of Supply Aggregation Component
-function QualityOfSupplyAggregation({ data }) {
-  const [nominalVoltage, setNominalVoltage] = useState('');
-  const [adjustedVoltages, setAdjustedVoltages] = useState(null);
-  if (!data || data.length === 0) return <div>No data available</div>;
-
-  // Filter for pfph values where pfph_a, pfph_b, pfph_c are all != 0
-  const pfphFiltered = data.filter(
-    (row) =>
-      row.pfph_a !== 0 && row.pfph_b !== 0 && row.pfph_c !== 0
-  );
-
-  // Filter for voltage values where va_avg_percent, vb_avg_percent, vc_avg_percent are all != -100
-  const voltageFiltered = data.filter(
-    (row) =>
-      row.va_avg_percent > -25 &&
-      row.vb_avg_percent > -25 && //undervoltage threshold 180V ....so -25 percent deviation from nominal 240V.
-      row.vc_avg_percent > -25
-  );
-
-  // Filter for vu_percent and iu_percent (not null, not 0, not 100, not 200)
-  const vuIuFiltered = data.filter(
-    (row) =>
-      row.vu_percent != null &&
-      row.vu_percent > 0 &&
-      row.vu_percent < 100 &&
-      row.iu_percent != null &&
-      row.iu_percent > 0 &&
-      row.iu_percent < 100
-  );
-
-  // Calculate averages
-  const avgPfavg3ph =
-    pfphFiltered.length > 0
-      ? pfphFiltered.reduce((sum, row) => sum + row.pfavg3ph, 0) /
-        pfphFiltered.length
-      : 0;
-  const avgPfphA =
-    pfphFiltered.length > 0
-      ? pfphFiltered.reduce((sum, row) => sum + row.pfph_a, 0) /
-        pfphFiltered.length
-      : 0;
-  const avgPfphB =
-    pfphFiltered.length > 0
-      ? pfphFiltered.reduce((sum, row) => sum + row.pfph_b, 0) /
-        pfphFiltered.length
-      : 0;
-  const avgPfphC =
-    pfphFiltered.length > 0
-      ? pfphFiltered.reduce((sum, row) => sum + row.pfph_c, 0) /
-        pfphFiltered.length
-      : 0;
-
-  const avgV3phAvgPercent =
-    voltageFiltered.length > 0
-    ? voltageFiltered.reduce((sum, row) => sum + row.v3ph_avg_percent, 0) /
-      voltageFiltered.length
-    : 0;
-  const avgVaAvgPercent =
-    voltageFiltered.length > 0
-      ? voltageFiltered.reduce((sum, row) => sum + row.va_avg_percent, 0) /
-        voltageFiltered.length
-      : 0;
-  const avgVbAvgPercent =
-    voltageFiltered.length > 0
-      ? voltageFiltered.reduce((sum, row) => sum + row.vb_avg_percent, 0) /
-        voltageFiltered.length
-      : 0;
-  const avgVcAvgPercent =
-    voltageFiltered.length > 0
-      ? voltageFiltered.reduce((sum, row) => sum + row.vc_avg_percent, 0) /
-        voltageFiltered.length
-      : 0;
-
-  const avgVuPercent =
-    vuIuFiltered.length > 0
-      ? vuIuFiltered.reduce((sum, row) => sum + row.vu_percent, 0) /
-        vuIuFiltered.length
-      : 0;
-  const avgIuPercent =
-    vuIuFiltered.length > 0
-      ? vuIuFiltered.reduce((sum, row) => sum + row.iu_percent, 0) /
-        vuIuFiltered.length
-      : 0;
-
-  function handleNominalVoltageChange(e) {
-    const V = Number(e.target.value);
-    setNominalVoltage(e.target.value);
-
-    if (!V) {
-      setAdjustedVoltages(null);
-      return;
-    }
-
-    // Use the previously calculated averages
-    setAdjustedVoltages({
-      v3ph: ((avgV3phAvgPercent * 240 / 100 + 240 - V) / V) * 100,
-      va: ((avgVaAvgPercent * 240 / 100 + 240 - V) / V) * 100,
-      vb: ((avgVbAvgPercent * 240 / 100 + 240 - V) / V) * 100,
-      vc: ((avgVcAvgPercent * 240 / 100 + 240 - V) / V) * 100,
-    });
-  }
-  return (
-    <div style={{ marginTop: "16px" }}>
-      <h3>Quality of Supply - Aggregated Data</h3>
-      {/* Power Factor Section */}
-      <Card title="Power Factor Averages" style={{ marginBottom: "16px" }}>
-        <Row gutter={16}>
-          <Col span={6}>
-            <Statistic title="Average pfavg3ph" value={avgPfavg3ph.toFixed(4)} />
-          </Col>
-          <Col span={6}>
-            <Statistic title="Average pfph_a" value={avgPfphA.toFixed(4)} />
-          </Col>
-          <Col span={6}>
-            <Statistic title="Average pfph_b" value={avgPfphB.toFixed(4)} />
-          </Col>
-          <Col span={6}>
-            <Statistic title="Average pfph_c" value={avgPfphC.toFixed(4)} />
-          </Col>
-        </Row>
-      </Card>
-      {/* Voltage Section */}
-      <Card title="Voltage Averages (%)" style={{ marginBottom: "16px",position: "relative" }} extra={
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <span>Nominal Voltage:</span>
-      <input
-        type="number"
-        value={nominalVoltage}
-        onChange={handleNominalVoltageChange}
-        style={{ width: 70, marginRight: 8 }}
-        placeholder="240V"
-        min={1}
-      />
-    </div>
-      }>
-        <Row gutter={16}>
-          <Col span={6}>
-            <Statistic
-              title="Average v3ph_avg_percent"
-              value={
-                adjustedVoltages
-                  ? adjustedVoltages.v3ph.toFixed(2)
-                  :avgV3phAvgPercent.toFixed(2)}
-              suffix="%"
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="Average va_avg_percent"
-              value={
-                adjustedVoltages
-                ? adjustedVoltages.va.toFixed(2)
-                : avgVaAvgPercent.toFixed(2)}
-              suffix="%"
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="Average vb_avg_percent"
-              value={
-                adjustedVoltages
-                ? adjustedVoltages.vb.toFixed(2)
-                : avgVbAvgPercent.toFixed(2)}
-              suffix="%"
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="Average vc_avg_percent"
-              value={
-                adjustedVoltages
-                ? adjustedVoltages.vc.toFixed(2)
-                : avgVcAvgPercent.toFixed(2)}
-              suffix="%"
-            />
-          </Col>
-        </Row>
-      </Card>
-      {/* VU/IU Section */}
-      <Card title="VU/IU Averages (%)">
-        <Row gutter={16}>
-          <Col span={12}>
-            <Statistic
-              title="Average vu_percent"
-              value={avgVuPercent.toFixed(2)}
-              suffix="%"
-            />
-          </Col>
-          <Col span={12}>
-            <Statistic
-              title="Average iu_percent"
-              value={avgIuPercent.toFixed(2)}
-              suffix="%"
-            />
-          </Col>
-        </Row>
-      </Card>
-    </div>
-  );
-}
-
 export default function SubdivisionSelector() {
   const [regionData, setRegionData] = useState(null);
   const [selectedSubdivision, setSelectedSubdivision] = useState(null);
@@ -521,6 +93,30 @@ export default function SubdivisionSelector() {
   const [reliabilityData, setReliabilityData] = useState([]);
   const [consumers, setConsumers] = useState({ a: 0, b: 0, c: 0 });
   const [load, setLoad] = useState({ a: 0, b: 0, c: 0 });
+  const [pq_avg, setPQ_avg] = useState({
+  saifi_cons: 0,
+  saidi_cons: 0,
+  caifi_cons: 0,
+  caidi_cons: 0,
+  ciii_cons: 0,
+  asai_cons: 0,
+  maifi_cons: 0,
+  maidi_cons: 0,
+
+  saifi_load: 0,
+  saidi_load: 0,
+  caifi_load: 0,
+  caidi_load: 0,
+  ciii_load: 0,
+  asai_load: 0,
+  maifi_load: 0,
+  maidi_load: 0,
+
+  ens: 0,
+  aens: 0,
+  ors: 0,
+  ca: 0
+  });
 
   const meterIdsForArea = selectedSubdivision
     ? locations.filter((loc) => loc.AREA === selectedSubdivision).map((loc) => loc.meterId)
@@ -541,6 +137,32 @@ export default function SubdivisionSelector() {
             b: data.reduce((sum, row) => sum + (row.lb || 0), 0),
             c: data.reduce((sum, row) => sum + (row.lc || 0), 0),
           });
+          setPQ_avg({
+            saifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saifi_cons || 0, 0) / data.length : 0,
+            saidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saidi_cons || 0, 0) / data.length : 0,
+            caifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caifi_cons || 0, 0) / data.length : 0,
+            caidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caidi_cons || 0, 0) / data.length : 0,
+            ciii_cons_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.ciii_cons || 0, 0) / data.length : 0,
+            asai_cons_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.asai_cons || 0, 0) / data.length : 0,
+            maifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maifi_cons || 0, 0) / data.length : 0,
+            maidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maidi_cons || 0, 0) / data.length : 0,
+
+            saifi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saifi_load || 0, 0) / data.length : 0,
+            saidi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saidi_load || 0, 0) / data.length : 0,
+            caifi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caifi_load || 0, 0) / data.length : 0,
+            caidi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caidi_load || 0, 0) / data.length : 0,
+            ciii_load_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.ciii_load || 0, 0) / data.length : 0,
+            asai_load_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.asai_load || 0, 0) / data.length : 0,
+            maifi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maifi_load || 0, 0) / data.length : 0,
+            maidi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maidi_load || 0, 0) / data.length : 0,
+
+            ens_avg:        data.length > 0 ? data.reduce((sum, row) => sum + row.ens || 0, 0) / data.length : 0,
+            aens_avg:       data.length > 0 ? data.reduce((sum, row) => sum + row.aens || 0, 0) / data.length : 0,
+            ors_avg:        data.length > 0 ? data.reduce((sum, row) => sum + row.ors || 0, 0) / data.length : 0,
+            ca_avg:         data.length > 0 ? data.reduce((sum, row) => sum + row.ca || 0, 0) / data.length : 0
+          });
+
+          
         })
         .catch(console.error);
     }
@@ -562,7 +184,6 @@ export default function SubdivisionSelector() {
 
   return (
     <div style={{ display: "flex", gap: "20px", padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-      {/* Meter IDs Box (Left) */}
       <Card
         title="Total Meter IDs:"
         style={{
@@ -619,21 +240,78 @@ export default function SubdivisionSelector() {
           </div>
         </div>
         <Divider style={{ margin: "16px 0" }} />
-        <Card title="Aggregated Reliability Indices" style={{ marginBottom: 16 }}>
-          <div>
-            <strong>Number of Consumers Phase Wise</strong>
-            <div>Phase a: {consumers.a}</div>
-            <div>Phase b: {consumers.b}</div>
-            <div>Phase c: {consumers.c}</div>
-          </div>
-          <Divider />
-          <div>
-            <strong>Load Phase Wise (kW)</strong>
-            <div>Phase a: {load.a}</div>
-            <div>Phase b: {load.b}</div>
-            <div>Phase c: {load.c}</div>
-          </div>
+        <Card title="Reliability Indices (Averages)" style={{ marginBottom: 16 }}>
+          <Row gutter={16} wrap={false} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
+            <Col>
+              <Statistic title="SAIFI (Consumers)" value={(pq_avg.saifi_cons_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="SAIDI (Consumers)" value={(pq_avg.saidi_cons_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="CAIFI (Consumers)" value={(pq_avg.caifi_cons_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="CAIDI (Consumers)" value={(pq_avg.caidi_cons_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="CIII (Consumers)" value={(pq_avg.ciii_cons_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="ASAI (Consumers)" value={(pq_avg.asai_cons_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="MAIFI (Consumers)" value={(pq_avg.maifi_cons_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="MAIDI (Consumers)" value={(pq_avg.maidi_cons_avg || 0).toFixed(3)} />
+            </Col>
+            
+            
+          </Row>
+          <Row gutter={16} wrap={false} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
+            <Col>
+              <Statistic title="SAIFI (Load)" value={(pq_avg.saifi_load_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="SAIDI (Load)" value={(pq_avg.saidi_load_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="CAIFI (Load)" value={(pq_avg.caifi_load_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="CAIDI (Load)" value={(pq_avg.caidi_load_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="CIII (Load)" value={(pq_avg.ciii_load_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="ASAI (Load)" value={(pq_avg.asai_load_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="MAIFI (Load)" value={(pq_avg.maifi_load_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="MAIDI (Load)" value={(pq_avg.maidi_load_avg || 0).toFixed(3)} />
+            </Col>
+          </Row>
+          <Row gutter={16} wrap={false} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
+            <Col>
+              <Statistic title="ENS" value={(pq_avg.ens_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="AENS" value={(pq_avg.aens_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="ORS" value={(pq_avg.ors_avg || 0).toFixed(3)} />
+            </Col>
+            <Col>
+              <Statistic title="CA" value={(pq_avg.ca_avg || 0).toFixed(3)} />
+            </Col>
+          </Row>
         </Card>
+
+
         <h3>Select a parameter to view the aggregated values of the region</h3>
         <Select
           style={{ width: "100%", marginBottom: "24px" }}
@@ -664,3 +342,4 @@ export default function SubdivisionSelector() {
     </div>
   );
 }
+
