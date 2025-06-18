@@ -106,24 +106,32 @@ export default function QualityOfSupplyAggregation({ data }) {
     <div style={{ marginTop: "16px" }}>
       <h3>Quality of Supply - Aggregated Data</h3>
       {/* Power Factor Section */}
-      <Card title="Power Factor Averages" style={{ marginBottom: "16px" }}>
+      <Card title={<span style={{color: '#1e90ff'}}>Power Factor Averages</span>} style={{ marginBottom: "16px" }}>
         <Row gutter={16}>
           <Col span={6}>
-            <Statistic title="Average pfavg3ph" value={avgPfavg3ph.toFixed(4)} />
+            <Card style={{ backgroundColor: '#e6f4ff' }}>
+              <Statistic title="Average Power Factor of 3 Phases" value={avgPfavg3ph.toFixed(4)} />
+            </Card>
           </Col>
           <Col span={6}>
-            <Statistic title="Average pfph_a" value={avgPfphA.toFixed(4)} />
+            <Card style={{ backgroundColor: '#e6f4ff' }}>
+              <Statistic title="Average Power Factor of Phase A" value={avgPfphA.toFixed(4)} />
+            </Card>  
           </Col>
           <Col span={6}>
-            <Statistic title="Average pfph_b" value={avgPfphB.toFixed(4)} />
+            <Card style={{ backgroundColor: '#e6f4ff' }}>
+              <Statistic title="Average Power Factor of Phase B" value={avgPfphB.toFixed(4)} />
+            </Card>
           </Col>
           <Col span={6}>
-            <Statistic title="Average pfph_c" value={avgPfphC.toFixed(4)} />
+            <Card style={{ backgroundColor: '#e6f4ff' }}>
+              <Statistic title="Average Power Factor of Phase C" value={avgPfphC.toFixed(4)} />
+            </Card>
           </Col>
         </Row>
       </Card>
       {/* Voltage Section */}
-      <Card title="Voltage Averages (%)" style={{ marginBottom: "16px",position: "relative" }} extra={
+      <Card title={<span style={{color: '#1e90ff'}}>Voltage Variation Averages (%)</span>} style={{ marginBottom: "16px",position: "relative" }} extra={
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
       <span>Nominal Voltage:</span>
       <input
@@ -138,63 +146,75 @@ export default function QualityOfSupplyAggregation({ data }) {
       }>
         <Row gutter={16}>
           <Col span={6}>
-            <Statistic
-              title="Average v3ph_avg_percent"
-              value={
-                adjustedVoltages
-                  ? adjustedVoltages.v3ph.toFixed(2)
-                  :avgV3phAvgPercent.toFixed(2)}
-              suffix="%"
-            />
+            <Card style={{ backgroundColor: '#e6f4ff' }}>
+              <Statistic
+                title="Average 3 Phase Voltage Variation"
+                value={
+                  adjustedVoltages
+                    ? adjustedVoltages.v3ph.toFixed(2)
+                    :avgV3phAvgPercent.toFixed(2)}
+                suffix="%"
+              />
+            </Card>
           </Col>
           <Col span={6}>
-            <Statistic
-              title="Average va_avg_percent"
-              value={
-                adjustedVoltages
-                ? adjustedVoltages.va.toFixed(2)
-                : avgVaAvgPercent.toFixed(2)}
-              suffix="%"
-            />
+            <Card style={{ backgroundColor: '#e6f4ff' }}>
+              <Statistic
+                title="Average Phase A Voltage Variation"
+                value={
+                  adjustedVoltages
+                  ? adjustedVoltages.va.toFixed(2)
+                  : avgVaAvgPercent.toFixed(2)}
+                suffix="%"
+              />
+            </Card>
           </Col>
           <Col span={6}>
-            <Statistic
-              title="Average vb_avg_percent"
-              value={
-                adjustedVoltages
-                ? adjustedVoltages.vb.toFixed(2)
-                : avgVbAvgPercent.toFixed(2)}
-              suffix="%"
-            />
+            <Card style={{ backgroundColor: '#e6f4ff' }}>
+              <Statistic
+                title="Average Phase B Voltage Variation"
+                value={
+                  adjustedVoltages
+                  ? adjustedVoltages.vb.toFixed(2)
+                  : avgVbAvgPercent.toFixed(2)}
+                suffix="%"
+              />
+            </Card>
           </Col>
           <Col span={6}>
-            <Statistic
-              title="Average vc_avg_percent"
-              value={
-                adjustedVoltages
-                ? adjustedVoltages.vc.toFixed(2)
-                : avgVcAvgPercent.toFixed(2)}
-              suffix="%"
-            />
+            <Card style={{ backgroundColor: '#e6f4ff' }}>
+              <Statistic
+                title="Average Phase C Voltage Variation"
+                value={
+                  adjustedVoltages
+                  ? adjustedVoltages.vc.toFixed(2)
+                  : avgVcAvgPercent.toFixed(2)}
+                suffix="%"
+              />
+            </Card>
           </Col>
         </Row>
       </Card>
       {/* VU/IU Section */}
-      <Card title="VU/IU Averages (%)">
+      <Card title={<span style={{color: '#1e90ff'}}>Voltage and Current Unbalance Averages (%)</span>}>
         <Row gutter={16}>
-          <Col span={12}>
+          <Col span={6}>
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
             <Statistic
-              title="Average vu_percent"
+              title="Average Voltage Unbalance Percent"
               value={avgVuPercent.toFixed(2)}
               suffix="%"
             />
+          </Card>
           </Col>
-          <Col span={12}>
+          <Col span={6}>
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
             <Statistic
-              title="Average iu_percent"
+              title="Average Current Unbalance Percent"
               value={avgIuPercent.toFixed(2)}
               suffix="%"
             />
+          </Card>
           </Col>
         </Row>
       </Card>

@@ -13,7 +13,17 @@ export const paramToColumnMap = {
   'Voltage Unbalance': 'vu_percent',
   'Current Unbalance': 'iu_percent',
   'Average Power Factor of 3 Phases': 'pfavg3ph',
+
+  'SAIFI (Consumers)': 'saifi_cons',
+  'SAIDI (Consumers)': 'saidi_cons',
+  'CAIFI (Consumers)': 'caifi_cons',
+  'CAIDI (Consumers)': 'caidi_cons',
+  'CIII (Consumers)': 'ciii_cons',
+  'ASAI (Consumers)': 'asai_cons',
+  'MAIFI (Consumers)': 'maifi_cons',
+  'MAIDI (Consumers)': 'maidi_cons'
 };
+
 
 export const parameterOptions = Object.keys(paramToColumnMap);
 

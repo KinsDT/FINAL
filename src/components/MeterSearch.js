@@ -96,7 +96,7 @@ export default function MeterSearch() {
   };
 
   useEffect(() => {
-    fetch("http://10.21.2.108:5000/tables")
+    fetch("http://localhost:5000/api/meter-data/tables")
       .then((res) => res.json())
       .then((json) => setTables(json.tables || []))
       .catch(() => setTables([]));
@@ -125,7 +125,7 @@ export default function MeterSearch() {
 
     try {
       for (const rawId of ids) {
-        const url = new URL("http://10.21.2.108:5000/data");
+        const url = new URL("http://localhost:5000/api/meter-data/data");
         url.searchParams.append("table", tableName);
         url.searchParams.append("meter_id", rawId);
         url.searchParams.append("page", "1");
@@ -237,10 +237,32 @@ export default function MeterSearch() {
       grouped[id].push(row);
     });
     const datasets = Object.entries(grouped).map(([id, rows]) => {
-      const sorted = [...rows].sort((a, b) => {
         if (xAxis === "date") {
+    const dailyMaxMap = {};
+    rows.forEach((r) => {
+      const dateKey = new Date(r.date).toISOString().split("T")[0]; // YYYY-MM-DD
+      const yVal = parseFloat(r[yAxis]) || 0;
+      if (!dailyMaxMap[dateKey] || dailyMaxMap[dateKey] < yVal) {
+        dailyMaxMap[dateKey] = yVal;
+      }
+    });
+
+    const sorted = Object.entries(dailyMaxMap)
+      .map(([x, y]) => ({ x: new Date(x).toLocaleDateString(), y }))
+      .sort((a, b) => new Date(a.x) - new Date(b.x));
+
+    return {
+      label: id,
+      data: sorted,
+      fill: false,
+      borderColor: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`,
+      tension: 0.2,
+    };
+  }
+      const sorted = [...rows].sort((a, b) => {
+        /*if (xAxis === "date") {
           return new Date(a.date).getTime() - new Date(b.date).getTime();
-        }
+        }*/
         if (xAxis.toLowerCase() === "time stamp") {
           return new Date(a[xAxis]).getTime() - new Date(b[xAxis]).getTime();
         }
@@ -255,9 +277,9 @@ export default function MeterSearch() {
         label: id,
         data: sorted.map((r) => ({
           x:
-            xAxis === "date"
-              ? new Date(r.date).toLocaleDateString()
-              : xAxis.toLowerCase() === "time stamp" || xAxis.toLowerCase() === "datetime"
+            /*xAxis === "date"
+              ? new Date(r.date).toLocaleDateString()*/
+              /*:*/ xAxis.toLowerCase() === "time stamp" || xAxis.toLowerCase() === "datetime"
               ? new Date(r[xAxis]).toLocaleString()
               : r[xAxis],
           y: parseFloat(r[yAxis]) || 0,
@@ -277,7 +299,7 @@ export default function MeterSearch() {
       <div className="container">
         <h1 className="heading">Meter Data Search</h1>
 
-        {/* View toggle: Table View vs. Graphical View */}
+  
         <div className="controls" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <ToggleSwitch
             onChange={(checked) => setViewMode(checked ? "graph" : "table")}
@@ -337,7 +359,7 @@ export default function MeterSearch() {
 
         {error && <p className="error">{error}</p>}
 
-        {/* TABLE VIEW */}
+  
         {viewMode === "table" && data.length > 0 && (
           <div className="tableWrapper">
             <table className="table">
@@ -374,7 +396,7 @@ export default function MeterSearch() {
           </div>
         )}
 
-        {/* GRAPHICAL VIEW */}
+  
         {viewMode === "graph" && (
           <>
             {allMeterIds.length > 1 && (
@@ -403,7 +425,7 @@ export default function MeterSearch() {
               </div>
             )}
 
-            {/* Multi-graph controls */}
+  
             {data.length > 0 && (
               <div>
                 {graphs.map((graph, idx) => (
@@ -467,7 +489,7 @@ export default function MeterSearch() {
               </div>
             )}
 
-            {/* Render all graphs side by side */}
+  
             <div style={{ display: "flex", gap: 24, marginTop: 24, flexWrap: "wrap" }}>
               {graphs.map((graph, idx) => {
                 const chartData = getChartData(graph.xAxis, graph.yAxis);

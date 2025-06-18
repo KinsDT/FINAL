@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Select, Card, Divider, Row, Col, Statistic } from "antd";
 import useMeterData from "../hooks/useMeterData";
 import PhasePieChart from "./PhasePieChart";
@@ -6,6 +6,7 @@ import "../styles/SubdivisionSelector.css";
 import VoltageInterruptionsAggregation from "./VoltageInterruptionsAggregation";
 import PowerQualityAggregation from "./PowerQualityAggregation";
 import QualityOfSupplyAggregation from "./QualityOfSupplyAggregation";
+import {Tooltip} from 'antd';
 const { Option } = Select;
 
 const parameters = [
@@ -20,7 +21,7 @@ const areaMap = {
 };
 
 // Combined Data Box as a functional component
-function CombinedDataBox() {
+/*function CombinedDataBox() {
   return (
     <div className="combined-data-box">
       <div style={{ fontWeight: 600, marginBottom: 8 }}>
@@ -83,7 +84,7 @@ function CombinedDataBox() {
       </div>
     </div>
   );
-}
+}*/
 
 export default function SubdivisionSelector() {
   const [regionData, setRegionData] = useState(null);
@@ -118,9 +119,13 @@ export default function SubdivisionSelector() {
   ca: 0
   });
 
-  const meterIdsForArea = selectedSubdivision
-    ? locations.filter((loc) => loc.AREA === selectedSubdivision).map((loc) => loc.meterId)
-    : [];
+  const meterIdsForArea = useMemo(() => {
+    return selectedSubdivision
+      ? locations.filter((loc) => loc.AREA === selectedSubdivision).map((loc) => loc.meterId)
+      : [];
+  }, [selectedSubdivision, locations]);
+
+  const meterIdsCSV = useMemo(() => meterIdsForArea.join(","), [meterIdsForArea]);
   React.useEffect(() => {
     if (selectedSubdivision) {
       fetch(`http://localhost:5000/api/reliability-indices?area=${areaMap[selectedSubdivision]}`)
@@ -138,14 +143,14 @@ export default function SubdivisionSelector() {
             c: data.reduce((sum, row) => sum + (row.lc || 0), 0),
           });
           setPQ_avg({
-            saifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saifi_cons || 0, 0) / data.length : 0,
-            saidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saidi_cons || 0, 0) / data.length : 0,
-            caifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caifi_cons || 0, 0) / data.length : 0,
-            caidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caidi_cons || 0, 0) / data.length : 0,
-            ciii_cons_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.ciii_cons || 0, 0) / data.length : 0,
-            asai_cons_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.asai_cons || 0, 0) / data.length : 0,
-            maifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maifi_cons || 0, 0) / data.length : 0,
-            maidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maidi_cons || 0, 0) / data.length : 0,
+            saifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saifi_cons || 0, 0)*0.69 / data.length : 0,
+            saidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saidi_cons || 0, 0)*0.69 / data.length : 0,
+            caifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caifi_cons || 0, 0)*0.69 / data.length : 0,
+            caidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caidi_cons || 0, 0)*0.69 / data.length : 0,
+            ciii_cons_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.ciii_cons || 0, 0)*0.69/ data.length : 0,
+            asai_cons_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.asai_cons || 0, 0)*0.69 / data.length : 0,
+            maifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maifi_cons || 0, 0)*0.69 / data.length : 0,
+            maidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maidi_cons || 0, 0)*0.69/ data.length : 0,
 
             saifi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saifi_load || 0, 0) / data.length : 0,
             saidi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saidi_load || 0, 0) / data.length : 0,
@@ -168,29 +173,31 @@ export default function SubdivisionSelector() {
     }
   }, [selectedSubdivision]);
 
-  const fetchRegionData = async (table) => {
-    if (!table || !meterIdsForArea.length) return;
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/region-data?table=${table}&meterIds=${meterIdsForArea.join(",")}`
-      );
-      const data = await response.json();
-      setRegionData(data);
-    } catch (err) {
-      console.error("Error fetching region data:", err);
-      setRegionData(null);
-    }
-  };
+  React.useEffect(() => {
+    if (!selectedParameter || !meterIdsCSV) return;
+
+    fetch(
+      `http://localhost:5000/api/region-data?table=${selectedParameter}&meterIds=${meterIdsCSV}`
+    )
+      .then((res) => res.json())
+      .then((data) => setRegionData(data))
+      .catch((err) => {
+        console.error("Error fetching region data:", err);
+        setRegionData(null);
+      });
+  }, [selectedParameter, meterIdsCSV]);
+
 
   return (
     <div style={{ display: "flex", gap: "20px", padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
       <Card
-        title="Total Meter IDs:"
+        title={<span style={{color: '#1e90ff'}}>All the Meter IDs:</span>}
         style={{
           width: "220px",
           maxHeight: "400px",
           overflowY: "auto",
           flexShrink: 0,
+          backgroundColor: "#e6f4ff"
         }}
         bodyStyle={{ padding: 12 }}
       >
@@ -205,7 +212,7 @@ export default function SubdivisionSelector() {
         )}
       </Card>
 
-      {/* Subdivision Selector and Combined Data (Right) */}
+      
       <div style={{ flexGrow: 1 }}>
         <h1>Please select a subdivision:</h1>
         <Select
@@ -224,7 +231,7 @@ export default function SubdivisionSelector() {
         <div>
           <h2 style={{ marginBottom: 12 }}>Combined Data</h2>
           <div className="subdivision-container">
-            <CombinedDataBox />
+
             <div className="pie-charts-box">
               <PhasePieChart
                 title="No. of Consumers Phase Wise"
@@ -241,87 +248,138 @@ export default function SubdivisionSelector() {
         </div>
         <Divider style={{ margin: "16px 0" }} />
         <Card title="Reliability Indices (Averages)" style={{ marginBottom: 16 }}>
-          <Row gutter={16} wrap={false} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
+          <Row gutter={24} wrap={false} style={{ overflowX: 'auto' }}>
             <Col>
-              <Statistic title="SAIFI (Consumers)" value={(pq_avg.saifi_cons_avg || 0).toFixed(3)} />
+              <div className="stat-group">
+                <Tooltip title = "System Average Interruption Frequency Index">
+                  <div className="label">SAIFI (Consumers)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.saifi_cons_avg || 0).toFixed(3)}</div>
+                <Tooltip title = "System Average Interruption Frequency Index">
+                  <div className="label">SAIFI (Load)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.saifi_load_avg || 0).toFixed(3)}</div>
+                <Tooltip title = "Energy Not Supplied">
+                  <div className="label">ENS</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.ens_avg || 0).toFixed(3)}</div>
+              </div>
             </Col>
             <Col>
-              <Statistic title="SAIDI (Consumers)" value={(pq_avg.saidi_cons_avg || 0).toFixed(3)} />
+              <div className="stat-group">
+                <Tooltip title = "System Average Interruption Duration Index">
+                  <div className="label">SAIDI (Consumers)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.saidi_cons_avg || 0).toFixed(3)}</div>
+                <Tooltip title = "System Average Interruption Duration Index">
+                  <div className="label">SAIDI (Load)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.saidi_load_avg || 0).toFixed(3)}</div>
+                <Tooltip title = "Average Energy Not Supplied">
+                  <div className="label">AENS</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.aens_avg || 0).toFixed(3)}</div>
+              </div>
             </Col>
             <Col>
-              <Statistic title="CAIFI (Consumers)" value={(pq_avg.caifi_cons_avg || 0).toFixed(3)} />
+              <div className="stat-group">
+                <Tooltip title="Customer Average Interruption Frequency Index">
+                  <div className="label" style={{ cursor: 'help' }}>CAIFI (Consumers)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.caifi_cons_avg || 0).toFixed(3)}</div>
+
+                <Tooltip title="Customer Average Interruption Frequency Index (Load)">
+                  <div className="label" style={{ cursor: 'help' }}>CAIFI (Load)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.caifi_load_avg || 0).toFixed(3)}</div>
+
+                <Tooltip title="Overall Reliability of System">
+                  <div className="label" style={{ cursor: 'help' }}>ORS</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.ors_avg || 0).toFixed(3)}</div>
+              </div>
             </Col>
+
             <Col>
-              <Statistic title="CAIDI (Consumers)" value={(pq_avg.caidi_cons_avg || 0).toFixed(3)} />
+              <div className="stat-group">
+                <Tooltip title="Customer Average Interruption Duration Index">
+                  <div className="label" style={{ cursor: 'help' }}>CAIDI (Consumers)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.caidi_cons_avg || 0).toFixed(3)}</div>
+
+                <Tooltip title="Customer Average Interruption Duration Index (Load)">
+                  <div className="label" style={{ cursor: 'help' }}>CAIDI (Load)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.caidi_load_avg || 0).toFixed(3)}</div>
+              </div>
             </Col>
+
             <Col>
-              <Statistic title="CIII (Consumers)" value={(pq_avg.ciii_cons_avg || 0).toFixed(3)} />
+              <div className="stat-group">
+                <Tooltip title="Consumer Interruption Impact Index">
+                  <div className="label" style={{ cursor: 'help' }}>CIII (Consumers)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.ciii_cons_avg || 0).toFixed(3)}</div>
+
+                <Tooltip title="Consumer Interruption Impact Index (Load)">
+                  <div className="label" style={{ cursor: 'help' }}>CIII (Load)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.ciii_load_avg || 0).toFixed(3)}</div>
+              </div>
             </Col>
+
             <Col>
-              <Statistic title="ASAI (Consumers)" value={(pq_avg.asai_cons_avg || 0).toFixed(3)} />
+              <div className="stat-group">
+                <Tooltip title="Average Service Availability Index">
+                  <div className="label" style={{ cursor: 'help' }}>ASAI (Consumers)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.asai_cons_avg || 0).toFixed(3)}</div>
+
+                <Tooltip title="Average Service Availability Index (Load)">
+                  <div className="label" style={{ cursor: 'help' }}>ASAI (Load)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.asai_load_avg || 0).toFixed(3)}</div>
+              </div>
             </Col>
+
             <Col>
-              <Statistic title="MAIFI (Consumers)" value={(pq_avg.maifi_cons_avg || 0).toFixed(3)} />
+              <div className="stat-group">
+                <Tooltip title="Momentary Average Interruption Frequency Index">
+                  <div className="label" style={{ cursor: 'help' }}>MAIFI (Consumers)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.maifi_cons_avg || 0).toFixed(3)}</div>
+
+                <Tooltip title="Momentary Average Interruption Frequency Index (Load)">
+                  <div className="label" style={{ cursor: 'help' }}>MAIFI (Load)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.maifi_load_avg || 0).toFixed(3)}</div>
+              </div>
             </Col>
+
             <Col>
-              <Statistic title="MAIDI (Consumers)" value={(pq_avg.maidi_cons_avg || 0).toFixed(3)} />
+              <div className="stat-group">
+                <Tooltip title="Momentary Average Interruption Duration Index">
+                  <div className="label" style={{ cursor: 'help' }}>MAIDI (Consumers)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.maidi_cons_avg || 0).toFixed(3)}</div>
+
+                <Tooltip title="Momentary Average Interruption Duration Index (Load)">
+                  <div className="label" style={{ cursor: 'help' }}>MAIDI (Load)</div>
+                </Tooltip>
+                <div className="value">{(pq_avg.maidi_load_avg || 0).toFixed(3)}</div>
+              </div>
             </Col>
-            
-            
-          </Row>
-          <Row gutter={16} wrap={false} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
-            <Col>
-              <Statistic title="SAIFI (Load)" value={(pq_avg.saifi_load_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="SAIDI (Load)" value={(pq_avg.saidi_load_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="CAIFI (Load)" value={(pq_avg.caifi_load_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="CAIDI (Load)" value={(pq_avg.caidi_load_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="CIII (Load)" value={(pq_avg.ciii_load_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="ASAI (Load)" value={(pq_avg.asai_load_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="MAIFI (Load)" value={(pq_avg.maifi_load_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="MAIDI (Load)" value={(pq_avg.maidi_load_avg || 0).toFixed(3)} />
-            </Col>
-          </Row>
-          <Row gutter={16} wrap={false} style={{ overflowX: 'auto', flexWrap: 'nowrap' }}>
-            <Col>
-              <Statistic title="ENS" value={(pq_avg.ens_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="AENS" value={(pq_avg.aens_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="ORS" value={(pq_avg.ors_avg || 0).toFixed(3)} />
-            </Col>
-            <Col>
-              <Statistic title="CA" value={(pq_avg.ca_avg || 0).toFixed(3)} />
-            </Col>
+
           </Row>
         </Card>
-
 
         <h3>Select a parameter to view the aggregated values of the region</h3>
         <Select
           style={{ width: "100%", marginBottom: "24px" }}
           placeholder="-- Choose a parameter --"
           value={selectedParameter}
-          onChange={(value) => {
-            setSelectedParameter(value);
-            fetchRegionData(value);
-          }}
-        >
+          onChange={setSelectedParameter}
+          >
           {parameters.map((param) => (
             <Option key={param.value} value={param.value}>
               {param.label}

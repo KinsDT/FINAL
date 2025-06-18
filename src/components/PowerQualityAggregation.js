@@ -62,40 +62,54 @@ export default function PowerQualityAggregation({ data }) {
       <h3>Power Quality - Aggregated Data</h3>
       
       {/* Voltage Phase Section */}
-      <Card title="Phase Voltage Averages (V)" style={{ marginBottom: "16px" }}>
+      <Card title={<span style={{color: '#1e90ff'}}>Phase Voltage Averages (V)</span>} style={{ marginBottom: "16px" }}>
         <Row gutter={16}>
           <Col span={8}>
-            <Statistic title="Average voltage_pha" value={avgVoltagePhA.toFixed(2)} suffix="V" />
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
+            <Statistic title="Average Voltage of Phase A" value={avgVoltagePhA.toFixed(2)} suffix="V" />
+          </Card>
           </Col>
           <Col span={8}>
-            <Statistic title="Average voltage_phb" value={avgVoltagePhB.toFixed(2)} suffix="V" />
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
+            <Statistic title="Average Voltage of Phase B" value={avgVoltagePhB.toFixed(2)} suffix="V" />
+          </Card>
           </Col>
           <Col span={8}>
-            <Statistic title="Average voltage_phc" value={avgVoltagePhC.toFixed(2)} suffix="V" />
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
+            <Statistic title="Average Voltage of Phase C" value={avgVoltagePhC.toFixed(2)} suffix="V" />
+          </Card>
           </Col>
         </Row>
       </Card>
 
       {/* Symmetrical Components Section */}
-      <Card title="Symmetrical Components Averages (V)" style={{ marginBottom: "16px" }}>
+      <Card title={<span style={{color: '#1e90ff'}}>Symmetrical Components Averages (V)</span>} style={{ marginBottom: "16px" }}>
         <Row gutter={16}>
           <Col span={8}>
-            <Statistic title="Average v1 (Positive)" value={avgV1.toFixed(2)} suffix="V" />
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
+            <Statistic title="Average Positive Sequence" value={avgV1.toFixed(2)} suffix="V" />
+          </Card>
           </Col>
           <Col span={8}>
-            <Statistic title="Average v2 (Negative)" value={avgV2.toFixed(2)} suffix="V" />
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
+            <Statistic title="Average Negative Sequence" value={avgV2.toFixed(2)} suffix="V" />
+          </Card>
           </Col>
           <Col span={8}>
-            <Statistic title="Average v0 (Zero)" value={avgV0.toFixed(2)} suffix="V" />
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
+            <Statistic title="Average Zero Sequence" value={avgV0.toFixed(2)} suffix="V" />
+          </Card>
           </Col>
         </Row>
       </Card>
 
       {/* Voltage Unbalance Factor Section */}
-      <Card title="Voltage Unbalance Factor">
+      <Card title={<span style={{color: '#1e90ff'}}>Voltage Unbalance Factor</span>}>
         <Row gutter={16}>
-          <Col span={24}>
-            <Statistic title="Average VUF" value={avgVuf.toFixed(4)} />
+          <Col span={8}>
+          <Card style={{ backgroundColor: '#e6f4ff' }}>
+            <Statistic title="Average Voltage Unbalance Factor" value={avgVuf.toFixed(4)} />
+          </Card>
           </Col>
         </Row>
       </Card>
