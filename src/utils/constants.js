@@ -21,7 +21,11 @@ export const paramToColumnMap = {
   'CIII (Consumers)': 'ciii_cons',
   'ASAI (Consumers)': 'asai_cons',
   'MAIFI (Consumers)': 'maifi_cons',
-  'MAIDI (Consumers)': 'maidi_cons'
+  'MAIDI (Consumers)': 'maidi_cons',
+
+  'Import Load Factor':'import_lf',
+  'Active Maximum Demand during Import':'active_md_import',
+  'Apparent Maximum Demand during Import':'apparent_md_import'
 };
 
 
