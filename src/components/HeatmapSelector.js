@@ -13,12 +13,12 @@ export default function HeatmapSelector({ selected, onChange }) {
   return (
     <div style={{
       position: 'absolute',
-      top: 100,
-      right: 20,
+      top: 110,
+      right: 30,
       zIndex: 1002,
       background: '#fff',
-      padding: 12,
-      borderRadius: 0,
+      padding: 0,
+      borderRadius: 6,
       boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
     }}>
       <Radio.Group
