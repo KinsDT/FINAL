@@ -1,68 +1,84 @@
 import React from 'react';
-import { Layout, Radio } from 'antd';
-import { parameterOptions } from '../utils/constants';
+import { Button } from 'antd';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { GlobalOutlined, EnvironmentOutlined, BarChartOutlined } from '@ant-design/icons';
 
-const { Sider } = Layout;
+export default function Sidebar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
 
-const Sidebar = ({ collapsed, setCollapsed, selectedParam, onRadioChange }) => {
   return (
-    <Sider
-      width={280}
-      collapsible
-      collapsed={collapsed}
-      collapsedWidth={0}
-      trigger={null}
-      style={{ background: '#fff', padding: '0px', position: 'relative' }}
+    <div
+      style={{
+        background: '#f7f7f7',
+        padding: '16px 12px',
+        borderRight: '1px solid #ddd',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '12px',
+        height: '100vh',
+      }}
     >
-      <div
-        onClick={() => setCollapsed(!collapsed)}
-        style={{
-          position: 'absolute',
-          top: 8,
-          left: collapsed ? 10 : 280,
-          width: 24,
-          height: 24,
-          borderRadius: '4px',
-          backgroundColor: '#1890ff',
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: 18,
-          lineHeight: '24px',
-          textAlign: 'center',
-          cursor: 'pointer',
-          userSelect: 'none',
-          boxShadow: '0 0 6px rgba(0,0,0,0.15)',
-          zIndex: 10,
-          transition: 'left 0.3s',
-        }}
-        title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-      >
-        {collapsed ? '›' : '‹'}
+      <div style={{ marginBottom: '24px' }}>
+        <img
+          src="/kimbal-logo.png"
+          alt="Logo"
+          style={{ width: '85%', objectFit: 'contain' }}
+        />
       </div>
 
-      {!collapsed && (
-        <Layout style={{ padding: '10px' }}>
-          <h2>Parameters</h2>
-          <Radio.Group
-            onChange={onRadioChange}
-            value={selectedParam}
-            style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
-          >
-            {parameterOptions.map((param) => (
-              <Radio key={param} value={param}>
-                {param}
-              </Radio>
-            ))}
-          </Radio.Group>
+      <Button
+        type="text"
+        icon={<EnvironmentOutlined />}
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          padding: '8px 12px',
+          borderRadius: '8px',
+          background: isActive('/Secondpage') ? '#bae7ff' : 'transparent',
+          color: isActive('/Secondpage') ? '#1890ff' : '#000',
+          fontWeight: 500
+        }}
+        onClick={() => navigate('/Secondpage')}
+      >
+        Area Details
+      </Button>
 
-          <div style={{ marginTop: '20px' }}>
-            <strong>Selected:</strong>
-            <div>{selectedParam || 'None'}</div>
-          </div>
-        </Layout>
-      )}
-    </Sider>
+      <Button
+        type="text"
+        icon={<BarChartOutlined />}
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          padding: '8px 12px',
+          borderRadius: '8px',
+          background: isActive('/Thirdpage') ? '#bae7ff' : 'transparent',
+          color: isActive('/Thirdpage') ? '#1890ff' : '#000',
+          fontWeight: 500
+        }}
+        onClick={() => navigate('/Thirdpage')}
+      >
+        Meter Details
+      </Button>
+
+      <Button
+        type="text"
+        icon={<GlobalOutlined />}
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          padding: '8px 12px',
+          borderRadius: '8px',
+          background: isActive('/') ? '#bae7ff' : 'transparent',
+          color: isActive('/') ? '#1890ff' : '#000',
+          fontWeight: 500
+        }}
+        onClick={() => navigate('/')}
+      >
+        Satellite View
+      </Button>
+    </div>
   );
-};
-
-export default Sidebar;
+}
