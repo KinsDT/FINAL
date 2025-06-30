@@ -316,7 +316,7 @@ export default function MeterSearch() {
 
   return (
     <div className="page">
-      <img src="/kimbal-logo.png" alt="Kimbal Logo" className="logo" />
+     
 
       <div className="container">
         <h1 className="heading">Meter Data Search</h1>

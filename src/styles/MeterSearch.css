@@ -3,7 +3,7 @@
   min-height: 100vh;
   background-color: #ffffff;
   color: #222;
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'GT Walsheim Pro';
   padding: 20px;
   box-sizing: border-box;
   position: relative;
@@ -20,9 +20,11 @@
   margin-bottom: 20px;
   font-weight: 700;
   font-size: 2rem;
-  text-align: center;
+  text-align: left;
   color: #222;
   letter-spacing: -0.5px;
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-weight: bold;
 }
 
 /* Controls */
