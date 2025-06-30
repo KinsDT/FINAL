@@ -71,7 +71,7 @@ const MeterMap = ({
       <MapContainer
         center={center}
         zoom={12}
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%',backgroundColor:'#ffffff' }}
         scrollWheelZoom={true}
       >
         <TileLayer

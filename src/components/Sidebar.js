@@ -11,7 +11,7 @@ export default function Sidebar() {
   return (
     <div
       style={{
-        background: '#f7f7f7',
+        background: '#ffffff',
         padding: '16px 12px',
         borderRight: '1px solid #ddd',
         display: 'flex',
