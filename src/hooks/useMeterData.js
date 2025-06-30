@@ -38,7 +38,7 @@ export default function useMeterData() {
     }
     const column = paramToColumnMap[selectedParam];
     const meterIds = locations.map(loc => loc.meterId).join(',');
-    fetch(`http://10.21.3.13:5000/api/meters?param=${column}&meterIds=${meterIds}&aggregation=${heatmapAgg}`)
+    fetch(`http://localhost:5000/api/meters?param=${column}&meterIds=${meterIds}&aggregation=${heatmapAgg}`)
       .then(res => res.json())
       .then(data => {
         const points = locations.map(loc => {
@@ -58,7 +58,7 @@ export default function useMeterData() {
     if (!column) return;
     const meterIds = locations.map(loc => loc.meterId).join(',');
     const aggQuery = aggregation.join(',');
-    fetch(`http://10.21.3.13:5000/api/meters?param=${column}&meterIds=${meterIds}&aggregation=${aggQuery}`)
+    fetch(`http://localhost:5000/api/meters?param=${column}&meterIds=${meterIds}&aggregation=${aggQuery}`)
       .then(res => res.json())
       .then(data => {
         const paramMap = {};

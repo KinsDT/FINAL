@@ -1,14 +1,18 @@
+
 import React, { useState } from 'react';
-import { Layout } from 'antd';
+import { Layout, Select } from 'antd';
 import useMeterData from '../hooks/useMeterData';
-import Sidebar from './Sidebar';
 import MainContent from './MainContent';
+import { parameterOptions } from '../utils/constants';
 import 'antd/dist/reset.css';
 import 'leaflet/dist/leaflet.css';
 import '../styles/HomePage.css';
+import { Button } from 'antd'
 
+const { Option } = Select;
+const{Sider,Content} = Layout
 export default function HomePage() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false); // not used anymore
   const {
     locations,
     selectedParam,
@@ -25,26 +29,81 @@ export default function HomePage() {
 
   return (
     <>
-      <img
-        src="/kimbal-logo.png"
-        alt="Logo"
-        className="logo"
-      />
+      
 
       <Layout style={{ height: '100vh' }}>
-        <Sidebar
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-          selectedParam={selectedParam}
-          onRadioChange={(e) => setSelectedParam(e.target.value)}
+        <Sider
+  width={200}
+  style={{
+    background: '#f7f7f7',
+    padding: '16px 12px',
+    borderRight: '1px solid #ddd',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '12px'
+  }}
+>
+  <div style={{ marginBottom: '24px' }}>
+    <img
+      src="/kimbal-logo.png"
+      alt="Logo"
+      style={{ width: '85%', objectFit: 'contain' }}
+    />
+  </div>
 
-        />
+  <Button
+    type="text"
+    style={{
+      width: '100%',
+      textAlign: 'left',
+      padding: '8px 12px',
+      borderRadius: '8px',
+      background: '#e6f7ff',
+      fontWeight: 500
+    }}
+    onClick={() => window.location.href = '/Secondpage'}
+  >
+    Area Details
+  </Button>
 
-        <Layout>
+  <Button
+    type="text"
+    style={{
+      width: '100%',
+      textAlign: 'left',
+      padding: '8px 12px',
+      borderRadius: '8px',
+      background: '#e6f7ff',
+      fontWeight: 500
+    }}
+    onClick={() => window.location.href = '/Thirdpage'}
+  >
+    Meter Details
+  </Button>
+  <Button
+    type="text"
+    style={{
+      width: '100%',
+      textAlign: 'left',
+      padding: '8px 12px',
+      borderRadius: '8px',
+      background: '#e6f7ff',
+      fontWeight: 500
+    }}
+    onClick={() => window.location.href = ''}
+  >
+    HomePage
+  </Button>
+</Sider>
+        <Layout style={{ padding: '0 24px 24px', width: '100%' }}>
+          
+
           <MainContent
             center={center}
             locations={locations}
             selectedParam={selectedParam}
+            setSelectedParam={setSelectedParam}
             meterParamData={meterParamData}
             aggregation={aggregation}
             setAggregation={setAggregation}

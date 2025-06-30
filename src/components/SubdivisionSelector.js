@@ -145,8 +145,8 @@ export default function SubdivisionSelector() {
           setPQ_avg({
             saifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saifi_cons || 0, 0)*0.69 / data.length : 0,
             saidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saidi_cons || 0, 0)*0.69 / data.length : 0,
-            caifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caifi_cons || 0, 0)*0.69 / data.length : 0,
-            caidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caidi_cons || 0, 0)*0.69 / data.length : 0,
+            caifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caifi_cons || 0, 0)*0.9 / data.length : 0,
+            caidi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caidi_cons || 0, 0)/5.2 / data.length : 0,
             ciii_cons_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.ciii_cons || 0, 0)*0.69/ data.length : 0,
             asai_cons_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.asai_cons || 0, 0)*0.69 / data.length : 0,
             maifi_cons_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maifi_cons || 0, 0)*0.69 / data.length : 0,
@@ -154,8 +154,8 @@ export default function SubdivisionSelector() {
 
             saifi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saifi_load || 0, 0) / data.length : 0,
             saidi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.saidi_load || 0, 0) / data.length : 0,
-            caifi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caifi_load || 0, 0) / data.length : 0,
-            caidi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caidi_load || 0, 0) / data.length : 0,
+            caifi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caifi_load || 0, 0)*1.20 / data.length : 0,
+            caidi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.caidi_load || 0, 0)/5 / data.length : 0,
             ciii_load_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.ciii_load || 0, 0) / data.length : 0,
             asai_load_avg:  data.length > 0 ? data.reduce((sum, row) => sum + row.asai_load || 0, 0) / data.length : 0,
             maifi_load_avg: data.length > 0 ? data.reduce((sum, row) => sum + row.maifi_load || 0, 0) / data.length : 0,

@@ -5,6 +5,8 @@ import { CustomMarkerLayer } from './CustomMarkerLayer';
 import L from 'leaflet';
 import { Marker, Popup, DivIcon } from 'react-leaflet';
 import {useNavigate} from 'react-router-dom';
+import HeatmapSelector from './HeatmapSelector';
+
 // ---- Gradient and Color Helpers ----
 const gradient = [
   { stop: 0.0, color: '#0000ff' },   // blue
@@ -56,6 +58,7 @@ const MeterMap = ({
   aggregation,
   heatmapAgg,
   heatmapData,
+  setHeatmapAgg
 }) => {
   // Find min and max for color normalization (for heatmap values)
   const navigate = useNavigate()
@@ -115,60 +118,7 @@ const MeterMap = ({
     />
   ))}
       </MapContainer>
-      <button
-        onClick={() => //{navigate('/dashboard') 
-          navigate('/Thirdpage')
-          // Replace with your navigation logic
-          // For example: window.location.href = '/dashboard';
-          // Or with React Router: navigate('/dashboard');
-        }
-        style={{
-          position: 'absolute',
-          bottom: '0px',
-          right: '0px',
-          zIndex: 1000,
-          padding: '10px 20px',
-          backgroundColor: '#1890ff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-          fontSize: '16px',
-          transition: 'background-color 0.2s'
-        }}
-        onMouseOver={(e) => e.target.style.backgroundColor='#00008b'}
-        onMouseOut={(e) => e.target.style.backgroundColor='#1890ff'}
-      >
-        For Detailed Meter-wise Dashboard: Click Here
-     </button>
-     <button
-        onClick={() => //{navigate('/dashboard') 
-          navigate('/Secondpage')
-          // Replace with your navigation logic
-          // For example: window.location.href = '/dashboard';
-          // Or with React Router: navigate('/dashboard');
-        }
-        style={{
-          position: 'absolute',
-          bottom: '0px',
-          left: '0px',
-          zIndex: 1000,
-          padding: '10px 20px',
-          backgroundColor: '#1890ff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-          fontSize: '16px',
-          transition: 'background-color 0.2s'
-        }}
-        onMouseOver={(e) => e.target.style.backgroundColor='#00008b'}
-        onMouseOut={(e) => e.target.style.backgroundColor='#1890ff'}
-      >
-        For Detailed Area-wise Dashboard: Click Here
-     </button>
+      <HeatmapSelector selected={heatmapAgg} onChange={setHeatmapAgg} />
     </div>
   );
 };
