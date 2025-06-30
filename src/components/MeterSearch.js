@@ -22,22 +22,16 @@ ChartJS.register(
   Legend
 );
 
-const ToggleSwitch = ({ onChange, isChecked }) => {
-  const handleToggleChange = () => {
-    onChange(!isChecked);
-  };
-
-  return (
-    <label className="switch">
-      <input
-        type="checkbox"
-        checked={isChecked}
-        onChange={handleToggleChange}
-      />
-      <span className="slider"></span>
-    </label>
-  );
-};
+const ToggleSwitch = ({ onChange, isChecked }) => (
+  <label className="switch">
+    <input
+      type="checkbox"
+      checked={isChecked}
+      onChange={() => onChange(!isChecked)}
+    />
+    <span className="slider"></span>
+  </label>
+);
 
 export default function MeterSearch() {
   const [tableName, setTableName] = useState("");
@@ -50,7 +44,6 @@ export default function MeterSearch() {
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("table");
   const [selectedMeterIds, setSelectedMeterIds] = useState([]);
-  // Multi-graph state:
   const [graphs, setGraphs] = useState([{ xAxis: "", yAxis: "" }]);
 
   const tableDisplayNames = {
@@ -237,32 +230,29 @@ export default function MeterSearch() {
       grouped[id].push(row);
     });
     const datasets = Object.entries(grouped).map(([id, rows]) => {
-        if (xAxis === "date") {
-    const dailyMaxMap = {};
-    rows.forEach((r) => {
-      const dateKey = new Date(r.date).toISOString().split("T")[0]; // YYYY-MM-DD
-      const yVal = parseFloat(r[yAxis]) || 0;
-      if (!dailyMaxMap[dateKey] || dailyMaxMap[dateKey] < yVal) {
-        dailyMaxMap[dateKey] = yVal;
+      if (xAxis === "date") {
+        const dailyMaxMap = {};
+        rows.forEach((r) => {
+          const dateKey = new Date(r.date).toISOString().split("T")[0]; // YYYY-MM-DD
+          const yVal = parseFloat(r[yAxis]) || 0;
+          if (!dailyMaxMap[dateKey] || dailyMaxMap[dateKey] < yVal) {
+            dailyMaxMap[dateKey] = yVal;
+          }
+        });
+
+        const sorted = Object.entries(dailyMaxMap)
+          .map(([x, y]) => ({ x: new Date(x).toLocaleDateString(), y }))
+          .sort((a, b) => new Date(a.x) - new Date(b.x));
+
+        return {
+          label: id,
+          data: sorted,
+          fill: false,
+          borderColor: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`,
+          tension: 0.2,
+        };
       }
-    });
-
-    const sorted = Object.entries(dailyMaxMap)
-      .map(([x, y]) => ({ x: new Date(x).toLocaleDateString(), y }))
-      .sort((a, b) => new Date(a.x) - new Date(b.x));
-
-    return {
-      label: id,
-      data: sorted,
-      fill: false,
-      borderColor: `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`,
-      tension: 0.2,
-    };
-  }
       const sorted = [...rows].sort((a, b) => {
-        /*if (xAxis === "date") {
-          return new Date(a.date).getTime() - new Date(b.date).getTime();
-        }*/
         if (xAxis.toLowerCase() === "time stamp") {
           return new Date(a[xAxis]).getTime() - new Date(b[xAxis]).getTime();
         }
@@ -277,9 +267,7 @@ export default function MeterSearch() {
         label: id,
         data: sorted.map((r) => ({
           x:
-            /*xAxis === "date"
-              ? new Date(r.date).toLocaleDateString()*/
-              /*:*/ xAxis.toLowerCase() === "time stamp" || xAxis.toLowerCase() === "datetime"
+            xAxis.toLowerCase() === "time stamp" || xAxis.toLowerCase() === "datetime"
               ? new Date(r[xAxis]).toLocaleString()
               : r[xAxis],
           y: parseFloat(r[yAxis]) || 0,
@@ -299,7 +287,6 @@ export default function MeterSearch() {
       <div className="container">
         <h1 className="heading">Meter Data Search</h1>
 
-  
         <div className="controls" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <ToggleSwitch
             onChange={(checked) => setViewMode(checked ? "graph" : "table")}
@@ -359,7 +346,6 @@ export default function MeterSearch() {
 
         {error && <p className="error">{error}</p>}
 
-  
         {viewMode === "table" && data.length > 0 && (
           <div className="tableWrapper">
             <table className="table">
@@ -380,9 +366,10 @@ export default function MeterSearch() {
                       return (
                         <td key={col} className="td">
                           {col === "date" && val
-                            ? new Date(val).toLocaleDateString()
+                            ? new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
                             : (col.toLowerCase() === "time stamp" || col.toLowerCase() === "datetime") && val
-                            ? new Date(val).toLocaleString()
+                            ? new Date(val).toLocaleTimeString("en-GB", { hour12: false }) + ", " +
+                              new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
                             : val === null || val === undefined
                             ? "-"
                             : val.toString()}
@@ -396,7 +383,6 @@ export default function MeterSearch() {
           </div>
         )}
 
-  
         {viewMode === "graph" && (
           <>
             {allMeterIds.length > 1 && (
@@ -425,7 +411,6 @@ export default function MeterSearch() {
               </div>
             )}
 
-  
             {data.length > 0 && (
               <div>
                 {graphs.map((graph, idx) => (
@@ -488,8 +473,6 @@ export default function MeterSearch() {
                 </button>
               </div>
             )}
-
-  
             <div style={{ display: "flex", gap: 24, marginTop: 24, flexWrap: "wrap" }}>
               {graphs.map((graph, idx) => {
                 const chartData = getChartData(graph.xAxis, graph.yAxis);
@@ -501,31 +484,31 @@ export default function MeterSearch() {
                         options={{
                           responsive: true,
                           plugins: {
-                            legend: { position: "top", labels: { color: "#e0e0e0" } },
+                            legend: { position: "top", labels: { color: "#222" } },
                             title: {
                               display: true,
                               text: `${columnDisplayNames[graph.yAxis] || graph.yAxis} vs. ${columnDisplayNames[graph.xAxis] || graph.xAxis}`,
-                              color: "#e0e0e0",
+                              color: "#222",
                             },
                             tooltip: { mode: "index", intersect: false },
                           },
                           scales: {
                             x: {
-                              ticks: { color: "#e0e0e0" },
-                              grid: { color: "#444" },
+                              ticks: { color: "#222" },
+                              grid: { color: "#ececf1" },
                               title: {
                                 display: true,
                                 text: columnDisplayNames[graph.xAxis] || graph.xAxis,
-                                color: "#e0e0e0",
+                                color: "#222",
                               },
                             },
                             y: {
-                              ticks: { color: "#e0e0e0" },
-                              grid: { color: "#444" },
+                              ticks: { color: "#222" },
+                              grid: { color: "#ececf1" },
                               title: {
                                 display: true,
                                 text: columnDisplayNames[graph.yAxis] || graph.yAxis,
-                                color: "#e0e0e0",
+                                color: "#222",
                               },
                             },
                           },
