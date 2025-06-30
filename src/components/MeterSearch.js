@@ -195,7 +195,6 @@ export default function MeterSearch() {
     } else {
       setSelectedMeterIds([]);
     }
-    // eslint-disable-next-line
   }, [data]);
 
   const handleMeterIdCheckbox = (meterId) => {
@@ -316,8 +315,6 @@ export default function MeterSearch() {
 
   return (
     <div className="page">
-     
-
       <div className="container">
         <h1 className="heading">Meter Data Search</h1>
 
@@ -402,7 +399,6 @@ export default function MeterSearch() {
                           <td key={col} className={`td${col === "date" ? " td-date" : ""}`}>
                             {col === "date" && val
                               ? (() => {
-                                  // Always single line: DD MMM YYYY
                                   const d = new Date(val);
                                   const day = d.getDate().toString().padStart(2, '0');
                                   const month = d.toLocaleString('en-GB', { month: 'short' });
@@ -423,74 +419,85 @@ export default function MeterSearch() {
                 </tbody>
               </table>
             </div>
+            {/* Pagination Controls */}
             <div className="paginationBar">
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div className="paginationControls">
                 <button
-                  onClick={() => handlePageChange(currentPage - 1)}
+                  className="pagination-btn arrow"
                   disabled={currentPage === 1}
-                  className="pagination-btn"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  aria-label="Previous"
                 >
-                  &lt;
+                  <span aria-hidden="true">&lt;</span>
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter(pageNum =>
-                    pageNum === 1 ||
-                    pageNum === totalPages ||
-                    (pageNum >= currentPage - 2 && pageNum <= currentPage + 2)
-                  )
-                  .map((pageNum, idx, arr) => {
-                    // Add ellipsis if needed
-                    if (
-                      idx > 0 &&
-                      pageNum - arr[idx - 1] > 1
-                    ) {
-                      return (
-                        <React.Fragment key={pageNum}>
-                          <span className="pagination-ellipsis">...</span>
-                          <button
-                            onClick={() => handlePageChange(pageNum)}
-                            className={currentPage === pageNum ? "pagination-btn active" : "pagination-btn"}
-                          >
-                            {pageNum}
-                          </button>
-                        </React.Fragment>
-                      );
-                    }
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
-                        className={currentPage === pageNum ? "pagination-btn active" : "pagination-btn"}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
+
                 <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="pagination-btn"
+                  className={`pagination-btn${currentPage === 1 ? " active" : ""}`}
+                  onClick={() => handlePageChange(1)}
                 >
-                  &gt;
+                  1
+                </button>
+
+                {currentPage > 3 && totalPages > 5 && (
+                  <span className="pagination-ellipsis">…</span>
+                )}
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(
+                    pageNum =>
+                      pageNum !== 1 &&
+                      pageNum !== totalPages &&
+                      pageNum >= currentPage - 1 &&
+                      pageNum <= currentPage + 1
+                  )
+                  .map(pageNum => (
+                    <button
+                      key={pageNum}
+                      className={`pagination-btn${currentPage === pageNum ? " active" : ""}`}
+                      onClick={() => handlePageChange(pageNum)}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+
+                {currentPage < totalPages - 2 && totalPages > 5 && (
+                  <span className="pagination-ellipsis">…</span>
+                )}
+
+                {totalPages > 1 && (
+                  <button
+                    className={`pagination-btn${currentPage === totalPages ? " active" : ""}`}
+                    onClick={() => handlePageChange(totalPages)}
+                  >
+                    {totalPages}
+                  </button>
+                )}
+
+                <button
+                  className="pagination-btn arrow"
+                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  aria-label="Next"
+                >
+                  <span aria-hidden="true">&gt;</span>
                 </button>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 14 }}>
+              <div className="paginationMeta">
+                <span>
                   {startRecord} - {endRecord} of {totalRecords}
                 </span>
-                <form onSubmit={handleGoToPage} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-                  <span style={{ fontSize: 14 }}>Go to page</span>
+                <span className="pagination-goto-label">
+                  Go to page
                   <input
                     type="number"
                     min="1"
                     max={totalPages}
                     value={goToPageInput}
-                    onChange={(e) => setGoToPageInput(e.target.value)}
-                    style={{ width: 50, padding: "2px 6px", borderRadius: 4, border: "1px solid #ccc", fontSize: 14 }}
+                    onChange={e => setGoToPageInput(e.target.value)}
+                    className="pagination-goto-input"
                   />
-                  <span style={{ fontSize: 14 }}>/ {totalPages}</span>
-                  <button type="submit" style={{ display: "none" }}>Go</button>
-                </form>
+                  / {totalPages}
+                </span>
               </div>
             </div>
           </div>

@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: 'GT Walsheim Pro';
+  src: url('/fonts/GT-Walsheim-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Walsheim Pro';
+  src: url('/fonts/GT-Walsheim-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
