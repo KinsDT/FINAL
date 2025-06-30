@@ -46,6 +46,16 @@ export default function MeterSearch() {
   const [selectedMeterIds, setSelectedMeterIds] = useState([]);
   const [graphs, setGraphs] = useState([{ xAxis: "", yAxis: "" }]);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10;
+  const [goToPageInput, setGoToPageInput] = useState("");
+
+  useEffect(() => {
+    setCurrentPage(1);
+    setGoToPageInput("");
+  }, [data]);
+
   const tableDisplayNames = {
     daily_qos_undervoltage: "Under-Voltage",
     block_wise_pq_template: "Power Quality",
@@ -219,6 +229,27 @@ export default function MeterSearch() {
 
   const columns = getColumnsByNonNullCount(data);
 
+  // PAGINATION LOGIC
+  const totalRecords = data.length;
+  const totalPages = Math.ceil(totalRecords / recordsPerPage);
+
+  const paginatedData = useMemo(() => {
+    const startIdx = (currentPage - 1) * recordsPerPage;
+    return data.slice(startIdx, startIdx + recordsPerPage);
+  }, [data, currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
+  const handleGoToPage = (e) => {
+    e.preventDefault();
+    const page = Number(goToPageInput);
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   // Chart data generator for each graph
   const getChartData = (xAxis, yAxis) => {
     if (!xAxis || !yAxis || !data.length || !selectedMeterIds.length) return null;
@@ -239,7 +270,6 @@ export default function MeterSearch() {
             dailyMaxMap[dateKey] = yVal;
           }
         });
-
         const sorted = Object.entries(dailyMaxMap)
           .map(([x, y]) => ({ x: new Date(x).toLocaleDateString(), y }))
           .sort((a, b) => new Date(a.x) - new Date(b.x));
@@ -279,6 +309,10 @@ export default function MeterSearch() {
     });
     return { datasets };
   };
+
+  // Helper for pagination range display
+  const startRecord = totalRecords === 0 ? 0 : (currentPage - 1) * recordsPerPage + 1;
+  const endRecord = Math.min(currentPage * recordsPerPage, totalRecords);
 
   return (
     <div className="page">
@@ -347,39 +381,118 @@ export default function MeterSearch() {
         {error && <p className="error">{error}</p>}
 
         {viewMode === "table" && data.length > 0 && (
-          <div className="tableWrapper">
-            <table className="table">
-              <thead>
-                <tr>
-                  {columns.map((col) => (
-                    <th key={col} className="th">
-                      {columnDisplayNames[col] || col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((row, idx) => (
-                  <tr key={idx}>
-                    {columns.map((col) => {
-                      const val = row[col];
-                      return (
-                        <td key={col} className="td">
-                          {col === "date" && val
-                            ? new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-                            : (col.toLowerCase() === "time stamp" || col.toLowerCase() === "datetime") && val
-                            ? new Date(val).toLocaleTimeString("en-GB", { hour12: false }) + ", " +
-                              new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-                            : val === null || val === undefined
-                            ? "-"
-                            : val.toString()}
-                        </td>
-                      );
-                    })}
+          <div className="tableArea">
+            <div className="tableWrapper">
+              <table className="table">
+                <thead>
+                  <tr>
+                    {columns.map((col) => (
+                      <th key={col} className="th">
+                        {columnDisplayNames[col] || col}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedData.map((row, idx) => (
+                    <tr key={idx}>
+                      {columns.map((col) => {
+                        const val = row[col];
+                        return (
+                          <td key={col} className={`td${col === "date" ? " td-date" : ""}`}>
+                            {col === "date" && val
+                              ? (() => {
+                                  // Always single line: DD MMM YYYY
+                                  const d = new Date(val);
+                                  const day = d.getDate().toString().padStart(2, '0');
+                                  const month = d.toLocaleString('en-GB', { month: 'short' });
+                                  const year = d.getFullYear();
+                                  return `${day} ${month} ${year}`;
+                                })()
+                              : (col.toLowerCase() === "time stamp" || col.toLowerCase() === "datetime") && val
+                              ? new Date(val).toLocaleTimeString("en-GB", { hour12: false }) + ", " +
+                                new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                              : val === null || val === undefined
+                              ? "-"
+                              : val.toString()}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="paginationBar">
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="pagination-btn"
+                >
+                  &lt;
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(pageNum =>
+                    pageNum === 1 ||
+                    pageNum === totalPages ||
+                    (pageNum >= currentPage - 2 && pageNum <= currentPage + 2)
+                  )
+                  .map((pageNum, idx, arr) => {
+                    // Add ellipsis if needed
+                    if (
+                      idx > 0 &&
+                      pageNum - arr[idx - 1] > 1
+                    ) {
+                      return (
+                        <React.Fragment key={pageNum}>
+                          <span className="pagination-ellipsis">...</span>
+                          <button
+                            onClick={() => handlePageChange(pageNum)}
+                            className={currentPage === pageNum ? "pagination-btn active" : "pagination-btn"}
+                          >
+                            {pageNum}
+                          </button>
+                        </React.Fragment>
+                      );
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={currentPage === pageNum ? "pagination-btn active" : "pagination-btn"}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="pagination-btn"
+                >
+                  &gt;
+                </button>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 14 }}>
+                  {startRecord} - {endRecord} of {totalRecords}
+                </span>
+                <form onSubmit={handleGoToPage} style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ fontSize: 14 }}>Go to page</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={totalPages}
+                    value={goToPageInput}
+                    onChange={(e) => setGoToPageInput(e.target.value)}
+                    style={{ width: 50, padding: "2px 6px", borderRadius: 4, border: "1px solid #ccc", fontSize: 14 }}
+                  />
+                  <span style={{ fontSize: 14 }}>/ {totalPages}</span>
+                  <button type="submit" style={{ display: "none" }}>Go</button>
+                </form>
+              </div>
+            </div>
           </div>
         )}
 
@@ -431,7 +544,6 @@ export default function MeterSearch() {
                         </option>
                       ))}
                     </select>
-
                     <select
                       value={graph.yAxis}
                       onChange={e => {

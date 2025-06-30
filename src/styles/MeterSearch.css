@@ -136,6 +136,7 @@
   border-right: none;
   border-left: none;
   letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 /* Table Data */
@@ -150,6 +151,7 @@
   border-left: none;
   font-weight: 400;
   letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .table tr:last-child .td {
@@ -241,3 +243,29 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
+
+.tableArea {
+  position: relative;
+  padding-bottom: 60px; /* Height of the pagination bar */
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.paginationBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid #eee;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  /* Optional: add a shadow for visibility */
+  box-shadow: 0 -2px 8px rgba(0,0,240,0.04);
+}
+
