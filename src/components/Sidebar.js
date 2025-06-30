@@ -18,7 +18,7 @@ export default function Sidebar() {
         flexDirection: 'column',
         alignItems: 'center',
         gap: '12px',
-        height: '100vh',
+        height: '300vh',
       }}
     >
       <div style={{ marginBottom: '24px' }}>
