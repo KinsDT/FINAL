@@ -65,11 +65,10 @@ export function CustomMarkerLayer({
               {selectedParam ? (
                 <>
                   <div><strong>{selectedParam}:</strong></div>
-                  {aggregation.map((agg) => (
-                    <div key={agg}>
-                      {agg.toUpperCase()}: {meterParamData[meterId]?.[agg] ?? 'N/A'}
-                    </div>
-                  ))}
+                  <div><strong>MAX:</strong> {meterParamData[meterId]?.max ?? 'N/A'}</div>
+                  <div><strong>MIN:</strong> {meterParamData[meterId]?.min ?? 'N/A'}</div>
+                  <div><strong>AVG:</strong> {meterParamData[meterId]?.avg ?? 'N/A'}</div>
+                  <div><strong>STDDEV:</strong> {meterParamData[meterId]?.stddev ?? 'N/A'}</div>
                 </>
               ) : (
                 'Select a parameter'

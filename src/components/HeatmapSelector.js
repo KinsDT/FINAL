@@ -13,8 +13,8 @@ export default function HeatmapSelector({ selected, onChange }) {
   return (
     <div style={{
       position: 'absolute',
-      top: 110,
-      right: 30,
+      top: 8,
+      right: 8,
       zIndex: 1002,
       background: '#fff',
       padding: 0,
