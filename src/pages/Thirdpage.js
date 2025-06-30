@@ -1,12 +1,21 @@
 import React from 'react';
+import { Layout } from 'antd';
 import MeterSearch from '../components/MeterSearch';
+import Sidebar from '../components/Sidebar';
 
-function App() {
+const { Sider, Content } = Layout;
+
+export default function Thirdpage() {
   return (
-    <div className="App">
-      <MeterSearch />
-    </div>
+    <Layout style={{ height: '100vh' }}>
+      <Sider width={200}>
+        <Sidebar />
+      </Sider>
+      <Layout style={{ padding: '0 24px', width: '100%' }}>
+        <Content style={{ marginTop: 24 }}>
+          <MeterSearch />
+        </Content>
+      </Layout>
+    </Layout>
   );
 }
-
-export default App;
