@@ -28,6 +28,7 @@ export default function HeatmapSelector({ selected, onChange }) {
         value={selected}
         optionType="button"
         buttonStyle="solid"
+        style={{fontFamily:'GT Walsheim Pro'}}
       />
     </div>
   );
