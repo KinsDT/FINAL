@@ -18,12 +18,12 @@
 /* Heading */
 .heading {
   margin-bottom: 20px;
-  font-weight: 700;
-  font-size: 2rem;
+  font-weight: 500;
+  font-size: 20px;
   text-align: left;
   color: #222;
   letter-spacing: -0.5px;
-  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-family: 'GT Walsheim Pro';
   font-weight: bold;
 }
 
@@ -108,8 +108,12 @@
 
 /* Table Wrapper */
 .tableWrapper {
+  border: 2px solid #e5e3f8;   /* Light purple border */
+  border-radius: 16px;          /* Rounded corners */
+  background: #fff;             /* White background */
+  padding: 0;                   /* Remove extra padding */
+  margin: 0;
   overflow-x: auto;
-  margin-top: 10px;
 }
 
 /* Table */
@@ -124,21 +128,23 @@
   margin: 0;
   box-shadow: none;
   table-layout: auto;
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
 }
 
 /* Table Header */
 .th {
   background: #F5F5FA;
   color: #808089;
-  font-weight: 600;
+  font-weight: 500;
   padding: 14px 12px;
   border-bottom: 1.5px solid #ececf1;
   text-align: left;
-  font-size: 0.98rem;
+  font-size: 14px;
   border-right: none;
   border-left: none;
   letter-spacing: 0.01em;
   white-space: nowrap;
+  font-family: 'GT Walsheim Pro';
 }
 
 /* Table Data */
@@ -147,19 +153,22 @@
   border-bottom: 1px solid #f2f2f5;
   color: #222;
   background: #fff;
-  font-size: 0.97rem;
+  font-size: 16px;
   text-align: left;
   border-right: none;
   border-left: none;
   font-weight: 400;
   letter-spacing: 0.01em;
   white-space: nowrap;
+  font-family: 'GT Walsheim Pro';
 }
 
 .table tr:last-child .td {
   border-bottom: none;
 }
-
+.table tbody tr:not(:last-child) td {
+  border-bottom: 1.5px solid #e5e3f8;  /* Light purple, matches outer border */
+}
 /* Zebra striping */
 
 
@@ -269,5 +278,125 @@ input:checked + .slider:before {
   z-index: 10;
   /* Optional: add a shadow for visibility */
   box-shadow: 0 -2px 8px rgba(0,0,240,0.04);
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
 }
+
+/* Pagination container */
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Pagination button base */
+.pagination-btn {
+  min-width: 40px;
+  height: 40px;
+  border: 1.5px solid #e5e3f8;
+  background: #fafbff;
+  color: #222;
+  border-radius: 12px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: inherit;
+  margin: 0 2px;
+}
+
+.pagination-btn:hover:not(:disabled):not(.active) {
+  background: #f0f4ff;
+  border-color: #bfc7e6;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #f5f7fa;
+  color: #bdbdbd;
+}
+
+/* Active page button */
+.pagination-btn.active {
+  background: #2967ff;
+  color: #fff;
+  border-color: #2967ff;
+  font-weight: 600;
+}
+
+/* Arrow buttons (left/right) */
+.pagination-btn.arrow {
+  background: #f0f4ff;
+  color: #2967ff;
+  border-color: #e5e3f8;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.pagination-btn.arrow:disabled {
+  background: #f5f7fa;
+  color: #bdbdbd;
+  border-color: #e5e3f8;
+}
+
+/* Ellipsis */
+.pagination-ellipsis {
+  color: #bdbdbd;
+  font-size: 22px;
+  margin: 0 4px;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Go to page and count styling */
+.paginationMeta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 16px;
+  color: #222;
+}
+
+.pagination-goto-label {
+  margin-left: 14px;
+  margin-right: 4px;
+}
+
+.pagination-goto-input {
+  width: 56px;
+  height: 32px;
+  border: 1.5px solid #e5e3f8;
+  border-radius: 8px;
+  font-size: 16px;
+  text-align: center;
+  background: #fafbff;
+  outline: none;
+  margin: 0 8px;
+  transition: border 0.2s;
+}
+
+.pagination-goto-input:focus {
+  border-color: #2967ff;
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 700px) {
+  .paginationBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 4px 0 4px;
+  }
+  .paginationMeta {
+    font-size: 14px;
+  }
+  .pagination-goto-input {
+    width: 40px;
+    font-size: 14px;
+  }
+}
+
 

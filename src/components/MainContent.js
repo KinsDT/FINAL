@@ -28,11 +28,12 @@ export default function MainContent({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '0 10px 20px',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        
       }}>
         <h1 style={{ margin: 0 }}>Satellite Map of Meter Locations</h1>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
           <label style={{ fontWeight: 600 }}>Parameter:</label>
           <Select
             value={selectedParam}
