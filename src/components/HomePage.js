@@ -20,6 +20,8 @@ export default function HomePage() {
 
   const {
     locations,
+    selectedArea,
+    setSelectedArea,
     selectedParam,
     setSelectedParam,
     meterParamData,
@@ -46,6 +48,8 @@ export default function HomePage() {
           <MainContent
             center={center}
             locations={locations}
+            selectedArea ={selectedArea}
+            setSelectedArea={setSelectedArea}
             selectedParam={selectedParam}
             setSelectedParam={setSelectedParam}
             meterParamData={meterParamData}
