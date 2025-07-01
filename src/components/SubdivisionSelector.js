@@ -22,7 +22,10 @@ const areaMap = {
 };
 
 export default function SubdivisionSelector() {
-  const [regionData, setRegionData] = useState(null);
+  const [voltageData, setVoltageData] = useState(null);
+  const [pqData, setPqData] = useState(null);
+  const [qosData, setQosData] = useState(null);
+
   const [selectedSubdivision, setSelectedSubdivision] = useState(null);
   const [selectedParameter, setSelectedParameter] = useState(null);
   const [showDashboard, setShowDashboard] = useState(false);
@@ -32,6 +35,7 @@ export default function SubdivisionSelector() {
   const [consumers, setConsumers] = useState({ a: 0, b: 0, c: 0 });
   const [load, setLoad] = useState({ a: 0, b: 0, c: 0 });
   const [pq_avg, setPQ_avg] = useState({});
+  const [showAllMeters, setShowAllMeters] = useState(false);
 
   const meterIdsForArea = useMemo(() => {
     return selectedSubdivision
@@ -90,16 +94,30 @@ export default function SubdivisionSelector() {
   }, [showDashboard, selectedSubdivision]);
 
   React.useEffect(() => {
-    if (!showDashboard || !selectedParameter || !meterIdsCSV) return;
+    if (!showDashboard || !meterIdsCSV) return;
 
-    fetch(`http://localhost:5000/api/region-data?table=${selectedParameter}&meterIds=${meterIdsCSV}`)
-      .then((res) => res.json())
-      .then(setRegionData)
-      .catch(err => {
-        console.error("Error fetching region data:", err);
-        setRegionData(null);
-      });
-  }, [showDashboard, selectedParameter, meterIdsCSV]);
+    const fetchData = async () => {
+    try {
+      const [voltageRes, pqRes, qosRes] = await Promise.all([
+        fetch(`http://localhost:5000/api/region-data?table=daily_qos_cut_outage&meterIds=${meterIdsCSV}`),
+        fetch(`http://localhost:5000/api/region-data?table=block_wise_pq_template&meterIds=${meterIdsCSV}`),
+        fetch(`http://localhost:5000/api/region-data?table=block_wise_qos_template&meterIds=${meterIdsCSV}`)
+      ]);
+
+      const voltageJson = await voltageRes.json();
+      const pqJson = await pqRes.json();
+      const qosJson = await qosRes.json();
+
+      setVoltageData(voltageJson);
+      setPqData(pqJson);
+      setQosData(qosJson);
+    } catch (error) {
+      console.error("Error fetching region data:", error);
+    }
+  };
+
+  fetchData();
+}, [showDashboard, meterIdsCSV]);
 
   return (
     <div style={{ padding: 24 }}>
@@ -120,7 +138,15 @@ export default function SubdivisionSelector() {
 
           <div style={{ marginTop: 16 }}>
             <button
-              onClick={() => setShowDashboard(true)}
+              onClick={() =>{ 
+                setVoltageData(null);
+                setPqData(null);
+                setQosData(null);
+                setReliabilityData([]);
+                setConsumers({ a: 0, b: 0, c: 0 });
+                setLoad({ a: 0, b: 0, c: 0 });
+                setShowDashboard(true);
+              }}
               disabled={!selectedSubdivision}
               style={{
                 padding: '8px 16px',
@@ -150,63 +176,217 @@ export default function SubdivisionSelector() {
           >
             ← Back
           </button>
+        
+        <div style={{ flexGrow: 1,maxWidth:2000 }}>
+          <div style={{ marginBottom: 24 }}>
+  <div style={{ fontWeight: 600, marginBottom: 8 }}>
+    Showing details for sub-division {selectedSubdivision}
+  </div>
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+    {(showAllMeters ? meterIdsForArea : meterIdsForArea.slice(0, 20)).map((meterId, index) => (
+      <div
+        key={index}
+        style={{
+          padding: '4px 12px',
+          backgroundColor: '#f0f0f0',
+          borderRadius: '999px',
+          fontSize: 14,
+        }}
+      >
+        {meterId}
+      </div>
+    ))}
+    {meterIdsForArea.length > 20 && (
+      <div
+        style={{
+          padding: '4px 12px',
+          cursor: 'pointer',
+          color: '#1677ff',
+          fontSize: 14,
+        }}
+        onClick={() => setShowAllMeters(!showAllMeters)}
+      >
+        {showAllMeters ? 'Show Less' : 'Show All'}
+      </div>
+    )}
+  </div>
+</div>
 
-          <div style={{ display: "flex", gap: "20px" }}>
-            <Card
-              title={<span style={{color: '#1e90ff'}}>All the Meter IDs:</span>}
-              style={{
-                width: "220px",
-                maxHeight: "400px",
-                overflowY: "auto",
-                flexShrink: 0,
-                backgroundColor: "#e6f4ff"
-              }}
-              bodyStyle={{ padding: 12 }}
-            >
-              {meterIdsForArea.length > 0 ? (
-                meterIdsForArea.map((meterId, index) => (
-                  <div key={index} style={{ marginBottom: "8px" }}>{meterId}</div>
-                ))
-              ) : (
-                <div>No meter IDs found for this area.</div>
-              )}
-            </Card>
 
-            <div style={{ flexGrow: 1 }}>
-              <h2>Combined Data</h2>
-              <div className="subdivision-container">
-                <div className="pie-charts-box">
-                  <PhasePieChart title="No. of Consumers Phase Wise" labels={["Phase a", "Phase b", "Phase c"]} data={[consumers.a, consumers.b, consumers.c]} />
-                  <PhasePieChart title="Load Phase Wise" labels={["Phase a", "Phase b", "Phase c"]} data={[load.a, load.b, load.c]} />
+
+            
+              <Card title="Combined Data" style={{ marginBottom: 24 }}>
+                <div className="subdivision-container">
+                  <div className="pie-charts-box">
+                    <PhasePieChart
+                      title="No. of Consumers Phase Wise"
+                      labels={["Phase a", "Phase b", "Phase c"]}
+                      data={[consumers.a, consumers.b, consumers.c]}
+                    />
+                    <PhasePieChart
+                      title="Load Phase Wise"
+                      labels={["Phase a", "Phase b", "Phase c"]}
+                      data={[load.a, load.b, load.c]}
+                    />
+                  </div>
                 </div>
-              </div>
-
-              <Divider style={{ margin: "16px 0" }} />
-              <Card title="Reliability Indices (Averages)" style={{ marginBottom: 16 }}>
-                <Row gutter={24} wrap={false} style={{ overflowX: 'auto' }}>
-                  {Object.entries(pq_avg).map(([key, value], index) => (
-                    <Col key={index}><Tooltip title={key}><div>{key.replace(/_/g, ' ')}</div><div>{value.toFixed(3)}</div></Tooltip></Col>
-                  ))}
-                </Row>
               </Card>
 
-              <h3>Select a parameter to view the aggregated values of the region</h3>
-              <Select
-                style={{ width: "100%", marginBottom: "24px" }}
-                placeholder="-- Choose a parameter --"
-                value={selectedParameter}
-                onChange={setSelectedParameter}
-              >
-                {parameters.map((param) => (
-                  <Option key={param.value} value={param.value}>{param.label}</Option>
-                ))}
-              </Select>
+              
+              <Card title="Reliability Indices" style={{ marginBottom: 24 }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '24px 40px',
+                    justifyContent: 'flex-start',
+                  }}
+                >
+                  <div className="stat-group">
+                    <Tooltip title="System Average Interruption Frequency Index">
+                      <div className="label">SAIFI (Consumers)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.saifi_cons_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="System Average Interruption Frequency Index">
+                      <div className="label">SAIFI (Load)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.saifi_load_avg || 0).toFixed(3)}</div>
+                  </div>
 
-              {regionData && selectedParameter === "block_wise_qos_template" && <QualityOfSupplyAggregation data={regionData} />}
-              {regionData && selectedParameter === "block_wise_pq_template" && <PowerQualityAggregation data={regionData} />}
-              {regionData && selectedParameter === "daily_qos_cut_outage" && <VoltageInterruptionsAggregation data={regionData} />}
-            </div>
-          </div>
+                  <div className="stat-group">
+                    <Tooltip title="Energy Not Supplied">
+                      <div className="label">ENS</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.ens_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="Average Energy Not Supplied">
+                      <div className="label">AENS</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.aens_avg || 0).toFixed(3)}</div>
+                  </div>
+
+                  <div className="stat-group">
+                    <Tooltip title="System Average Interruption Duration Index">
+                      <div className="label">SAIDI (Consumers)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.saidi_cons_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="System Average Interruption Duration Index">
+                      <div className="label">SAIDI (Load)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.saidi_load_avg || 0).toFixed(3)}</div>
+                  </div>
+
+                  <div className="stat-group">
+                    <Tooltip title="Customer Average Interruption Frequency Index">
+                      <div className="label">CAIFI (Consumers)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.caifi_cons_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="Customer Average Interruption Frequency Index (Load)">
+                      <div className="label">CAIFI (Load)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.caifi_load_avg || 0).toFixed(3)}</div>
+                  </div>
+
+                  <div className="stat-group">
+                    <Tooltip title="Overall Reliability of System">
+                      <div className="label">ORS</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.ors_avg || 0).toFixed(3)}</div>
+                  </div>
+
+                  <div className="stat-group">
+                    <Tooltip title="Customer Average Interruption Duration Index">
+                      <div className="label">CAIDI (Consumers)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.caidi_cons_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="Customer Average Interruption Duration Index (Load)">
+                      <div className="label">CAIDI (Load)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.caidi_load_avg || 0).toFixed(3)}</div>
+                  </div>
+
+                  <div className="stat-group">
+                    <Tooltip title="Consumer Interruption Impact Index">
+                      <div className="label">CIII (Consumers)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.ciii_cons_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="Consumer Interruption Impact Index (Load)">
+                      <div className="label">CIII (Load)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.ciii_load_avg || 0).toFixed(3)}</div>
+                  </div>
+
+                  <div className="stat-group">
+                    <Tooltip title="Average Service Availability Index">
+                      <div className="label">ASAI (Consumers)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.asai_cons_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="Average Service Availability Index (Load)">
+                      <div className="label">ASAI (Load)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.asai_load_avg || 0).toFixed(3)}</div>
+                  </div>
+
+                  <div className="stat-group">
+                    <Tooltip title="Momentary Average Interruption Frequency Index">
+                      <div className="label">MAIFI (Consumers)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.maifi_cons_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="Momentary Average Interruption Frequency Index (Load)">
+                      <div className="label">MAIFI (Load)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.maifi_load_avg || 0).toFixed(3)}</div>
+                  </div>
+
+                  <div className="stat-group">
+                    <Tooltip title="Momentary Average Interruption Duration Index">
+                      <div className="label">MAIDI (Consumers)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.maidi_cons_avg || 0).toFixed(3)}</div>
+                  </div>
+                  <div className = "stat-group">
+                    <Tooltip title="Momentary Average Interruption Duration Index (Load)">
+                      <div className="label">MAIDI (Load)</div>
+                    </Tooltip>
+                    <div className="value">{(pq_avg.maidi_load_avg || 0).toFixed(3)}</div>
+                  </div>
+                </div>
+              </Card>
+
+                {qosData && (
+                  <Card title="Power Factor Averages" style={{ marginBottom: 24 }}>
+                    <QualityOfSupplyAggregation data={qosData} />
+                  </Card>
+                )}
+
+                {pqData && (
+                  <Card title="Power Quality Aggregated Data" style={{ marginBottom: 24 }}>
+                    <PowerQualityAggregation data={pqData} />
+                  </Card>
+                )}
+
+                {voltageData && (
+                  <Card title="Voltage Interruptions Aggregated Data">
+                    <VoltageInterruptionsAggregation data={voltageData} />
+                  </Card>
+                )}
+              </div>
+            
         </>
       )}
     </div>
