@@ -38,16 +38,15 @@
 }
 
 @font-face {
-  font-family: 'GT Walsheim Pro';
-  src: url('/fonts/GT-Walsheim-Regular.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+  font-family: "GT Walsheim Pro";   /*Can be any text*/
+  src: local("GT-Walsheim-Regular"),
+    url("./fonts/GT-Walsheim-Regular.ttf") format("truetype");
 }
 
 @font-face {
-  font-family: 'GT Walsheim Pro';
-  src: url('/fonts/GT-Walsheim-Bold.otf') format('opentype');
+  font-family: "GT Walsheim Pro";   /*Can be any text*/
+  src: local("GT-Walsheim-Bold"),
+    url("./fonts/GT-Walsheim-Bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
   font-display: swap;

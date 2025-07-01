@@ -31,14 +31,14 @@ export default function MainContent({
         flexWrap: 'wrap',
         
       }}>
-        <h1 style={{ margin: 0 }}>Satellite Map of Meter Locations</h1>
+        <h1 style={{ margin: 0,fontFamily: 'GT Walsheim Pro',fontStyle:'Bold' }}>Satellite Map of Meter Locations</h1>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', }}>
-          <label style={{ fontWeight: 600 }}>Parameter:</label>
+          <label style={{ fontWeight: 600,fontFamily: 'GT Walsheim Pro' }}>Parameter:</label>
           <Select
             value={selectedParam}
             onChange={value => setSelectedParam(value)}
-            style={{ width: 250 }}
+            style={{ width: 250,fontFamily: 'GT Walsheim Pro' }}
             placeholder="Select parameter"
           >
             {parameterOptions.map((param) => (

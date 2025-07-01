@@ -20,6 +20,7 @@ export default function HeatmapSelector({ selected, onChange }) {
       padding: 0,
       borderRadius: 6,
       boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+      fontFamily: 'GT Walsheim Pro'
     }}>
       <Radio.Group
         options={options}

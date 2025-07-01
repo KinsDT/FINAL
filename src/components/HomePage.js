@@ -42,7 +42,7 @@ export default function HomePage() {
           <Sidebar />
         </Sider>
 
-        <Layout style={{ padding: '0 0px 0px', width: '100%',backgroundColor:'#ffffff'}}>
+        <Layout style={{ padding: '0 0px 0px', width: '100%',backgroundColor:'#ffffff',fontFamily: 'GT Walsheim Pro'}}>
           <MainContent
             center={center}
             locations={locations}
