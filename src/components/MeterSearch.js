@@ -22,6 +22,7 @@ ChartJS.register(
   Legend
 );
 
+// ToggleSwitch unchanged
 const ToggleSwitch = ({ onChange, isChecked }) => (
   <label className="switch">
     <input
@@ -45,8 +46,6 @@ export default function MeterSearch() {
   const [viewMode, setViewMode] = useState("table");
   const [selectedMeterIds, setSelectedMeterIds] = useState([]);
   const [graphs, setGraphs] = useState([{ xAxis: "", yAxis: "" }]);
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
   const [goToPageInput, setGoToPageInput] = useState("");
@@ -153,12 +152,10 @@ export default function MeterSearch() {
           const idB = (b.meter_id || "").toUpperCase();
           if (idA < idB) return -1;
           if (idA > idB) return 1;
-
           const dateA = new Date(a.date);
           const dateB = new Date(b.date);
           if (dateA < dateB) return -1;
           if (dateA > dateB) return 1;
-
           const blockA = Number(a.block) || 0;
           const blockB = Number(b.block) || 0;
           return blockA - blockB;
@@ -182,13 +179,11 @@ export default function MeterSearch() {
     }
   };
 
-  // All unique meter IDs in the current data
   const allMeterIds = useMemo(() => {
     const ids = Array.from(new Set(data.map(row => row.meter_id).filter(Boolean)));
     return ids;
   }, [data]);
 
-  // Set default selectedMeterIds to first 5 when data changes
   useEffect(() => {
     if (allMeterIds.length > 0) {
       setSelectedMeterIds(allMeterIds.slice(0, 5));
@@ -209,11 +204,9 @@ export default function MeterSearch() {
 
   const getColumnsByNonNullCount = (dataArray) => {
     if (!dataArray.length) return [];
-
     const allCols = Object.keys(dataArray[0]);
     const prioritized = ["date", "meter_id"];
     const otherCols = allCols.filter((c) => !prioritized.includes(c));
-
     const counts = otherCols.map((col) => {
       const nonNullCount = dataArray.reduce(
         (acc, row) => (row[col] !== null && row[col] !== undefined ? acc + 1 : acc),
@@ -222,13 +215,10 @@ export default function MeterSearch() {
       return { col, nonNullCount };
     });
     counts.sort((a, b) => b.nonNullCount - a.nonNullCount);
-
     return [...prioritized, ...counts.map((c) => c.col)];
   };
 
   const columns = getColumnsByNonNullCount(data);
-
-  // PAGINATION LOGIC
   const totalRecords = data.length;
   const totalPages = Math.ceil(totalRecords / recordsPerPage);
 
@@ -249,7 +239,6 @@ export default function MeterSearch() {
     }
   };
 
-  // Chart data generator for each graph
   const getChartData = (xAxis, yAxis) => {
     if (!xAxis || !yAxis || !data.length || !selectedMeterIds.length) return null;
     const grouped = {};
@@ -263,7 +252,7 @@ export default function MeterSearch() {
       if (xAxis === "date") {
         const dailyMaxMap = {};
         rows.forEach((r) => {
-          const dateKey = new Date(r.date).toISOString().split("T")[0]; // YYYY-MM-DD
+          const dateKey = new Date(r.date).toISOString().split("T")[0];
           const yVal = parseFloat(r[yAxis]) || 0;
           if (!dailyMaxMap[dateKey] || dailyMaxMap[dateKey] < yVal) {
             dailyMaxMap[dateKey] = yVal;
@@ -272,7 +261,6 @@ export default function MeterSearch() {
         const sorted = Object.entries(dailyMaxMap)
           .map(([x, y]) => ({ x: new Date(x).toLocaleDateString(), y }))
           .sort((a, b) => new Date(a.x) - new Date(b.x));
-
         return {
           label: id,
           data: sorted,
@@ -309,74 +297,179 @@ export default function MeterSearch() {
     return { datasets };
   };
 
-  // Helper for pagination range display
   const startRecord = totalRecords === 0 ? 0 : (currentPage - 1) * recordsPerPage + 1;
   const endRecord = Math.min(currentPage * recordsPerPage, totalRecords);
 
   return (
-    <div className="page">
-      <div className="container">
-        <h1 className="heading">Meter Data Search</h1>
+    <div className="page" style={{ background: "#fff", minHeight: "100vh" }}>
+      <div className="container" style={{ maxWidth: 1000, margin: "32px auto", padding: "0 24px" }}>
+        <h1 className="heading" style={{
+          fontFamily: "'GT Walsheim Pro', Arial, sans-serif",
+          fontWeight: 700,
+          fontSize: 28,
+          marginBottom: 32,
+          color: "#27272A"
+        }}>
+          Meter-wise Dashboard
+        </h1>
 
-        <div className="controls" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <ToggleSwitch
-            onChange={(checked) => setViewMode(checked ? "graph" : "table")}
-            isChecked={viewMode === "graph"}
-          />
-          <span>
-            {viewMode === "table" ? "Switch to graphical view" : "Switch to Tabular view"}
-          </span>
+        {/* Modern stacked controls */}
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
+            Parameter Name
+          </label>
+          <select
+            value={tableName}
+            onChange={e => setTableName(e.target.value)}
+            style={{
+              width: "360px",
+              padding: "12px",
+              borderRadius: 10,
+              border: "1px solid #DDDDE3",
+              background: "#fff",
+              fontSize: 16,
+              fontWeight:400,
+              color: tableName ? "#27272A" : "#A1A1AA",
+              outline: "none"
+            }}
+          >
+            <option value="">Select Parameter</option>
+            {tables.map(table => (
+              <option key={table} value={table}>
+                {tableDisplayNames[table] || table}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {viewMode === "table" && (
-          <div className="controls">
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
+            Meter IDs
+          </label>
+          <div style={{ display: "flex", gap: 0 }}>
             <select
-              value={tableName}
-              onChange={(e) => setTableName(e.target.value)}
-              className="select"
+              style={{
+                flex: 1,
+                padding: "16px",
+                border: "1.5px solid #E7E7EC",
+                borderRadius: "12px 0 0 12px",
+                background: "#fff",
+                fontSize: 16,
+                color: "#A1A1AA"
+              }}
+              disabled
             >
-              <option value="">Select Table</option>
-              {tables.map((table) => (
-                <option key={table} value={table}>
-                  {tableDisplayNames[table] || table}
-                </option>
-              ))}
+              <option>Select Sub-division</option>
             </select>
-
             <input
               type="text"
-              placeholder="Enter Meter IDs (comma-separated)"
+              placeholder="Select Meters"
               value={meterIdsInput}
-              onChange={(e) => setMeterIdsInput(e.target.value)}
-              className="input"
+              onChange={e => setMeterIdsInput(e.target.value)}
+              style={{
+                flex: 2,
+                padding: "16px",
+                border: "1.5px solid #E7E7EC",
+                borderLeft: "none",
+                borderRadius: "0 12px 12px 0",
+                background: "#F4F3F8",
+                fontSize: 16,
+                color: "#27272A"
+              }}
             />
-
-            <input
-              type="date"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="dateInput"
-            />
-
-            <input
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              className="dateInput"
-            />
-
-            <button
-              onClick={fetchData}
-              disabled={loading}
-              className={loading ? "buttonDisabled" : "button"}
-            >
-              {loading ? "Loading..." : "Search"}
-            </button>
           </div>
-        )}
+        </div>
 
-        {error && <p className="error">{error}</p>}
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
+            Dates
+          </label>
+          <div style={{ display: "flex", gap: 0 }}>
+            <input
+              type="date"
+              placeholder="Select Start Date"
+              value={fromDate}
+              onChange={e => setFromDate(e.target.value)}
+              style={{
+                flex: 1,
+                padding: "16px",
+                border: "1.5px solid #E7E7EC",
+                borderRadius: "12px 0 0 12px",
+                background: "#fff",
+                fontSize: 16,
+                color: "#27272A"
+              }}
+            />
+            <input
+              type="date"
+              placeholder="Select End Date"
+              value={toDate}
+              onChange={e => setToDate(e.target.value)}
+              style={{
+                flex: 1,
+                padding: "16px",
+                border: "1.5px solid #E7E7EC",
+                borderLeft: "none",
+                borderRadius: "0 12px 12px 0",
+                background: "#fff",
+                fontSize: 16,
+                color: "#27272A"
+              }}
+            />
+          </div>
+        </div>
 
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
+            Data Format
+          </label>
+          <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+            <label style={{ display: "flex", alignItems: "center", fontSize: 16, color: "#27272A" }}>
+              <input
+                type="radio"
+                name="dataFormat"
+                checked={viewMode === "table"}
+                onChange={() => setViewMode("table")}
+                style={{ marginRight: 8 }}
+              />
+              Tabular Format
+            </label>
+            <label style={{ display: "flex", alignItems: "center", fontSize: 16, color: "#27272A" }}>
+              <input
+                type="radio"
+                name="dataFormat"
+                checked={viewMode === "graph"}
+                onChange={() => setViewMode("graph")}
+                style={{ marginRight: 8 }}
+              />
+              Graphical Format
+            </label>
+          </div>
+        </div>
+
+        {/* Search button */}
+        <button
+          onClick={fetchData}
+          disabled={loading}
+          style={{
+            padding: "12px 32px",
+            backgroundColor: "#2967FF",
+            color: "#fff",
+            borderRadius: 12,
+            border: "none",
+            fontSize: 16,
+            fontWeight: 600,
+            cursor: loading ? "not-allowed" : "pointer",
+            marginBottom: 32,
+            boxShadow: "0 2px 8px rgba(41,103,255,0.07)"
+          }}
+        >
+          {loading ? "Loading..." : "Search"}
+        </button>
+
+        {error && <p style={{ color: "red", marginBottom: 24 }}>{error}</p>}
+
+        {/* Table or Graph View */}
         {viewMode === "table" && data.length > 0 && (
           <div className="tableArea">
             <div className="tableWrapper">
@@ -430,18 +523,15 @@ export default function MeterSearch() {
                 >
                   <span aria-hidden="true">&lt;</span>
                 </button>
-
                 <button
                   className={`pagination-btn${currentPage === 1 ? " active" : ""}`}
                   onClick={() => handlePageChange(1)}
                 >
                   1
                 </button>
-
                 {currentPage > 3 && totalPages > 5 && (
                   <span className="pagination-ellipsis">…</span>
                 )}
-
                 {Array.from({ length: totalPages }, (_, i) => i + 1)
                   .filter(
                     pageNum =>
@@ -459,11 +549,9 @@ export default function MeterSearch() {
                       {pageNum}
                     </button>
                   ))}
-
                 {currentPage < totalPages - 2 && totalPages > 5 && (
                   <span className="pagination-ellipsis">…</span>
                 )}
-
                 {totalPages > 1 && (
                   <button
                     className={`pagination-btn${currentPage === totalPages ? " active" : ""}`}
@@ -472,7 +560,6 @@ export default function MeterSearch() {
                     {totalPages}
                   </button>
                 )}
-
                 <button
                   className="pagination-btn arrow"
                   disabled={currentPage === totalPages}
