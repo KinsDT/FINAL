@@ -31,6 +31,25 @@ export default function Sidebar() {
 
       <Button
         type="text"
+        icon={<GlobalOutlined />}
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          padding: '8px 12px',
+          borderRadius: '8px',
+          background: isActive('/') ? '#bae7ff' : 'transparent',
+          color: isActive('/') ? '#1890ff' : '#000',
+          fontWeight: 500,
+          fontFamily: 'GT Walsheim Pro'
+          
+        }}
+        onClick={() => navigate('/')}
+      >
+        Satellite View
+      </Button>
+
+      <Button
+        type="text"
         icon={<EnvironmentOutlined />}
         style={{
           width: '100%',
@@ -65,24 +84,7 @@ export default function Sidebar() {
         Meter Details
       </Button>
 
-      <Button
-        type="text"
-        icon={<GlobalOutlined />}
-        style={{
-          width: '100%',
-          textAlign: 'left',
-          padding: '8px 12px',
-          borderRadius: '8px',
-          background: isActive('/') ? '#bae7ff' : 'transparent',
-          color: isActive('/') ? '#1890ff' : '#000',
-          fontWeight: 500,
-          fontFamily: 'GT Walsheim Pro'
-          
-        }}
-        onClick={() => navigate('/')}
-      >
-        Satellite View
-      </Button>
+      
     </div>
   );
 }

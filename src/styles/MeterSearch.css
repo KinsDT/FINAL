@@ -3,7 +3,7 @@
   min-height: 100vh;
   background-color: #ffffff;
   color: #222;
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'GT Walsheim Pro';
+  font-family: 'GT Walsheim Pro','Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'GT Walsheim Pro';
   padding: 20px;
   box-sizing: border-box;
   position: relative;
@@ -18,13 +18,14 @@
 /* Heading */
 .heading {
   margin-bottom: 20px;
-  font-weight: 500;
-  font-size: 20px;
   text-align: left;
-  color: #222;
-  letter-spacing: -0.5px;
-  font-family: 'GT Walsheim Pro';
-  font-weight: bold;
+  
+  color: var(--text-primary, #27272A);
+font-family: "GT Walsheim Pro";
+font-size: 20px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
 }
 
 /* Controls */
