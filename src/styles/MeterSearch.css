@@ -321,16 +321,16 @@ input:checked + .slider:before {
 
 /* Active page button */
 .pagination-btn.active {
-  background: #2967ff;
+  background: #1773BE;
   color: #fff;
-  border-color: #2967ff;
+  border-color: #1773BE;
   font-weight: 600;
 }
 
 /* Arrow buttons (left/right) */
 .pagination-btn.arrow {
   background: #f0f4ff;
-  color: #2967ff;
+  color: #1773BE;
   border-color: #e5e3f8;
   font-size: 22px;
   font-weight: 700;

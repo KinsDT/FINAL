@@ -112,7 +112,7 @@ const MeterMap = ({
       position={[lat, lng]}
       icon={L.divIcon({
         className: "",
-        html: `<div style="padding:4px 12px;border-radius:8px;font-weight:bold;font-size:15px;color:#fff;">${area}</div>`,
+        html: `<div style="padding:4px 12px;border-radius:8px;font-weight:bold;font-size:15px;color:#fff;font-family: 'GT Walsheim Pro';">${area}</div>`,
       })}
       interactive={false}
     />

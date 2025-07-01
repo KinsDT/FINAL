@@ -10,7 +10,7 @@ export default function AreaSelector({ selectedArea, setSelectedArea, availableA
       <span style={{ marginRight: 8, fontWeight: 500 }}>Area:</span>
       <Select
         placeholder="Select area"
-        style={{ width: 160 }}
+        style={{ width: 160,fontFamily:'GT Walsheim Pro' }}
         value={selectedArea}
         onChange={setSelectedArea}
         allowClear

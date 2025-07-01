@@ -39,7 +39,8 @@ export default function Sidebar() {
           borderRadius: '8px',
           background: isActive('/Secondpage') ? '#bae7ff' : 'transparent',
           color: isActive('/Secondpage') ? '#1890ff' : '#000',
-          fontWeight: 500
+          fontWeight: 500,
+          fontFamily: 'GT Walsheim Pro'
         }}
         onClick={() => navigate('/Secondpage')}
       >
@@ -56,7 +57,8 @@ export default function Sidebar() {
           borderRadius: '8px',
           background: isActive('/Thirdpage') ? '#bae7ff' : 'transparent',
           color: isActive('/Thirdpage') ? '#1890ff' : '#000',
-          fontWeight: 500
+          fontWeight: 500,
+          fontFamily:'GT Walsheim Pro'
         }}
         onClick={() => navigate('/Thirdpage')}
       >
@@ -73,7 +75,9 @@ export default function Sidebar() {
           borderRadius: '8px',
           background: isActive('/') ? '#bae7ff' : 'transparent',
           color: isActive('/') ? '#1890ff' : '#000',
-          fontWeight: 500
+          fontWeight: 500,
+          fontFamily: 'GT Walsheim Pro'
+          
         }}
         onClick={() => navigate('/')}
       >

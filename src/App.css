@@ -38,19 +38,24 @@
 }
 
 @font-face {
-  font-family: 'GT Walsheim Pro';
-  src: url('/fonts/GT-Walsheim-Regular.otf') format('opentype');
-  font-weight: normal;
+  font-family: "GT Walsheim Pro";   /*Can be any text*/
+  src: local("GT-Walsheim-Regular"),
+    url("./fonts/GT-Walsheim-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "GT Walsheim Pro";   /*Can be any text*/
+  src: local("GT-Walsheim-Bold"),
+    url("./fonts/GT-Walsheim-Bold.ttf") format("truetype");
+  font-weight: bold;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'GT Walsheim Pro';
-  src: url('/fonts/GT-Walsheim-Bold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
+.ant-radio-button-wrapper {
+  font-family: 'GT Walsheim Pro', Arial, sans-serif !important;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 
