@@ -1,7 +1,14 @@
 import React from "react";
-import { Card, Row, Col, Statistic } from "antd";
+import { Select,Spin,Card, Row, Col, Statistic } from "antd";
 
-export default function VoltageInterruptionsAggregation({ data }) {
+export default function VoltageInterruptionsAggregation({ data,loading }) {
+  if (loading){
+    return(
+      <div style={{ minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Spin size="large" tip="Loading..."/>
+      </div>
+    );
+  }
   if (!Array.isArray(data)) {
   console.error("Invalid data passed to VoltageInterruptionsAggregation:", data);
   return <div>Invalid data format</div>;
@@ -58,7 +65,7 @@ const maxOutageDuration = outageDurationFiltered.reduce((max, row) => {
   return (
     <Card
       title="Voltage Interruptions - Aggregated Data"
-      style={{ marginTop: 16, marginBottom: 24 }}
+      style={{ marginTop: 16, marginBottom: 24,borderColor:'#DDDDE3',borderRadius:16 }}
     >
       <div
         style={{

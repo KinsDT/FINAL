@@ -223,11 +223,19 @@ export default function QualityOfSupplyAggregation({ data }) {
 }
 */
 import React, { useState } from "react";
-import { Card, Row, Col, Statistic } from "antd";
+import { Spin, Card, Row, Col, Statistic } from "antd";
 
-export default function QualityOfSupplyAggregation({ data }) {
+export default function QualityOfSupplyAggregation({ data, loading }) {
+  
   const [nominalVoltage, setNominalVoltage] = useState('');
   const [adjustedVoltages, setAdjustedVoltages] = useState(null);
+  if (loading){
+    return(
+          <div style={{ minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Spin size="large" tip="Loading..."/>
+          </div>
+        );
+  }
   if (!data || data.length === 0) return <div>No data available</div>;
 
   // Filter for pfph values where pfph_a, pfph_b, pfph_c are all != 0
@@ -328,7 +336,7 @@ export default function QualityOfSupplyAggregation({ data }) {
   }
 
   return (
-    <Card title="Quality of Supply" style={{ marginBottom: 24}} extra ={
+    <Card title="Quality of Supply" style={{ marginBottom: 24,borderColor:'#DDDDE3',borderRadius:16}} extra ={
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}>
       <span style={{ fontWeight: 600 }}>Nominal Voltage:</span>
       <input
