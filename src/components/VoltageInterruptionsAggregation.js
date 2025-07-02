@@ -56,98 +56,61 @@ const maxOutageDuration = outageDurationFiltered.reduce((max, row) => {
   const totalOutageCount = outageDurationFiltered.length;
 
   return (
-    <div style={{ marginTop: "16px" }}>
-      <h3>Voltage Interruptions - Aggregated Data</h3>
-      
-      {/* Cut Duration Section */}
-      <Card title={<span style={{color: '#1e90ff'}}>Cut Duration Analysis</span>} style={{marginBottom: "16px"}}>
-        <Row gutter={16}>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic 
-              title="Average Cut Duration" 
-              value={avgCutDuration.toFixed(2)}
-              suffix="minutes"   
-            />
-          </Card>
-          </Col>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic 
-              title="Maximum Cut Duration" 
-              value={maxCutDuration.toFixed(2)} 
-              suffix="minutes"
-            />
-          </Card>
-          </Col>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic 
-              title="Total Cut Count" 
-              value={totalCutCount} 
-              suffix="events"
-            />
-          </Card>
-          </Col>
-        </Row>
-      </Card>
+    <Card
+      title="Voltage Interruptions - Aggregated Data"
+      style={{ marginTop: 16, marginBottom: 24 }}
+    >
+      <div
+        style={{
+          fontFamily: 'GT Walsheim Pro',
+          fontWeight: 500,
+          fontSize: 18,
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '24px 40px',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+          width: '100%',
+        }}
+      >
+        {/* Cut Duration Analysis */}
+        <div className="stat-group">
+          <div className="label">Average Cut Duration</div>
+          <div className="value">{avgCutDuration.toFixed(2)} minutes</div>
+        </div>
+        <div className="stat-group">
+          <div className="label">Maximum Cut Duration</div>
+          <div className="value">{maxCutDuration.toFixed(2)} minutes</div>
+        </div>
+        <div className="stat-group">
+          <div className="label">Total Cut Count</div>
+          <div className="value">{totalCutCount} events</div>
+        </div>
 
-      {/* Outage Duration Section */}
-      <Card title={<span style={{color: '#1e90ff'}}>Outage Duration Analysis</span>} style={{ marginBottom: "16px" }}>
-        <Row gutter={16}>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic 
-              title="Average Outage Duration" 
-              value={avgOutageDuration.toFixed(2)} 
-              suffix="minutes"
-            />
-          </Card>
-          </Col>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic 
-              title="Maximum Outage Duration" 
-              value={maxOutageDuration.toFixed(2)} 
-              suffix="minutes"
-            />
-          </Card>
-          </Col>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic 
-              title="Total Outage Count" 
-              value={totalOutageCount} 
-              suffix="events"
-            />
-          </Card>
-          </Col>
-        </Row>
-      </Card>
+        {/* Outage Duration Analysis */}
+        <div className="stat-group">
+          <div className="label">Average Outage Duration</div>
+          <div className="value">{avgOutageDuration.toFixed(2)} minutes</div>
+        </div>
+        <div className="stat-group">
+          <div className="label">Maximum Outage Duration</div>
+          <div className="value">{maxOutageDuration.toFixed(2)} minutes</div>
+        </div>
+        <div className="stat-group">
+          <div className="label">Total Outage Count</div>
+          <div className="value">{totalOutageCount} events</div>
+        </div>
 
-      {/* Summary Section */}
-      <Card title={<span style={{color: '#1e90ff'}}>Summary Statistics</span>}>
-        <Row gutter={16}>
-          <Col span={12}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic 
-              title="Records with Cut Events" 
-              value={cutDurationFiltered.length} 
-              suffix={`of ${data.length}`}
-            />
-          </Card>
-          </Col>
-          <Col span={12}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic 
-              title="Records with Outage Events" 
-              value={outageDurationFiltered.length} 
-              suffix={`of ${data.length}`}
-            />
-          </Card>
-          </Col>
-        </Row>
-      </Card>
-    </div>
+        {/* Summary Statistics */}
+        <div className="stat-group">
+          <div className="label">Records with Cut Events</div>
+          <div className="value">{cutDurationFiltered.length} of {data.length}</div>
+        </div>
+        <div className="stat-group">
+          <div className="label">Records with Outage Events</div>
+          <div className="value">{outageDurationFiltered.length} of {data.length}</div>
+        </div>
+      </div>
+    </Card>
   );
 }

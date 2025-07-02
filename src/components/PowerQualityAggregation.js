@@ -58,61 +58,58 @@ export default function PowerQualityAggregation({ data }) {
       : 0;
 
   return (
-    <div style={{ marginTop: "16px" }}>
-      <h3>Power Quality - Aggregated Data</h3>
-      
-      {/* Voltage Phase Section */}
-      <Card title={<span style={{color: '#1e90ff'}}>Phase Voltage Averages (V)</span>} style={{ marginBottom: "16px" }}>
-        <Row gutter={16}>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic title="Average Voltage of Phase A" value={avgVoltagePhA.toFixed(2)} suffix="V" />
-          </Card>
-          </Col>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic title="Average Voltage of Phase B" value={avgVoltagePhB.toFixed(2)} suffix="V" />
-          </Card>
-          </Col>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic title="Average Voltage of Phase C" value={avgVoltagePhC.toFixed(2)} suffix="V" />
-          </Card>
-          </Col>
-        </Row>
-      </Card>
+  <Card
+    title="Power Quality - Aggregated Data"
+    style={{ marginTop: 16, marginBottom: 24 }}
+  >
+    <div
+      style={{
+        fontFamily: 'GT Walsheim Pro',
+        fontWeight: 500,
+        fontSize: 18,
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '24px 40px',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        width: '100%',
+      }}
+    >
+      {/* Phase Voltage Averages */}
+      <div className="stat-group">
+        <div className="label">Average Voltage of Phase A</div>
+        <div className="value">{avgVoltagePhA.toFixed(2)} V</div>
+      </div>
+      <div className="stat-group">
+        <div className="label">Average Voltage of Phase B</div>
+        <div className="value">{avgVoltagePhB.toFixed(2)} V</div>
+      </div>
+      <div className="stat-group">
+        <div className="label">Average Voltage of Phase C</div>
+        <div className="value">{avgVoltagePhC.toFixed(2)} V</div>
+      </div>
 
-      {/* Symmetrical Components Section */}
-      <Card title={<span style={{color: '#1e90ff'}}>Symmetrical Components Averages (V)</span>} style={{ marginBottom: "16px" }}>
-        <Row gutter={16}>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic title="Average Positive Sequence" value={avgV1.toFixed(2)} suffix="V" />
-          </Card>
-          </Col>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic title="Average Negative Sequence" value={avgV2.toFixed(2)} suffix="V" />
-          </Card>
-          </Col>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic title="Average Zero Sequence" value={avgV0.toFixed(2)} suffix="V" />
-          </Card>
-          </Col>
-        </Row>
-      </Card>
+      {/* Symmetrical Components */}
+      <div className="stat-group">
+        <div className="label">Average Positive Sequence</div>
+        <div className="value">{avgV1.toFixed(2)} V</div>
+      </div>
+      <div className="stat-group">
+        <div className="label">Average Negative Sequence</div>
+        <div className="value">{avgV2.toFixed(2)} V</div>
+      </div>
+      <div className="stat-group">
+        <div className="label">Average Zero Sequence</div>
+        <div className="value">{avgV0.toFixed(2)} V</div>
+      </div>
 
-      {/* Voltage Unbalance Factor Section */}
-      <Card title={<span style={{color: '#1e90ff'}}>Voltage Unbalance Factor</span>}>
-        <Row gutter={16}>
-          <Col span={8}>
-          <Card style={{ backgroundColor: '#e6f4ff' }}>
-            <Statistic title="Average Voltage Unbalance Factor" value={avgVuf.toFixed(4)} />
-          </Card>
-          </Col>
-        </Row>
-      </Card>
+      {/* Voltage Unbalance Factor */}
+      <div className="stat-group">
+        <div className="label">Average Voltage Unbalance Factor</div>
+        <div className="value">{avgVuf.toFixed(4)}</div>
+      </div>
     </div>
-  );
+  </Card>
+);
+
 }
