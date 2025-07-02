@@ -5,6 +5,11 @@
   flex-direction: row;
   gap: 20px;
   align-items: flex-start;
+  font-family: 'GT Walsheim Pro';
+  color: #27272A;
+  font-size: 18px;
+  font-weight:500
+
 }
 
 .combined-data-box {
@@ -19,13 +24,17 @@
   flex-direction: row;
   gap: 20px;
   width: 300px;
+  font-family: 'GT Walsheim Pro';
+  color: #27272A;
+  font-size: 16px;
+  font-weight:500
 }
 
 .stat-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-width: 150px;
+  min-width: 220px;
   gap: 8px;
 }
 
@@ -38,8 +47,14 @@
 }
 
 .stat-group .value {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
+  color: #27272A;
   text-align: center;
+  font-family: 'GT Walsheim Pro';
+  
 }
 
+.ant-layout {
+  padding: 0 !important;
+}

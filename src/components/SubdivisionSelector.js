@@ -120,13 +120,13 @@ export default function SubdivisionSelector() {
 }, [showDashboard, meterIdsCSV]);
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24,backgroundColor: '#FFFFFF' }}>
       {!showDashboard ? (
         <>
-          <h2>Area-wise Dashboard</h2>
-          <label style={{ fontWeight: 500 }}>Sub-division</label>
+          <h2 style={{fontFamily:'GT Walsheim Pro',fontWeight:500,fontSize:20,marginBottom:16}}>Area-wise Dashboard</h2>
+          <label style={{ fontFamily:'GT Walsheim Pro',fontWeight: 500,fontSize:16,display:'block'}}>Sub-division</label>
           <Select
-            style={{ width: 300, marginTop: 8 }}
+            style={{ width: 300, marginTop: 8,display:'block' }}
             placeholder="Choose a subdivision"
             onChange={setSelectedSubdivision}
             value={selectedSubdivision}
@@ -136,7 +136,7 @@ export default function SubdivisionSelector() {
             <Option value="Gossaigaon">Gossaigaon</Option>
           </Select>
 
-          <div style={{ marginTop: 16 }}>
+          <div style={{ marginTop:600}}>
             <button
               onClick={() =>{ 
                 setVoltageData(null);
@@ -149,12 +149,16 @@ export default function SubdivisionSelector() {
               }}
               disabled={!selectedSubdivision}
               style={{
+                position:'fixed',
+                right:60,
+                bottom:24,
                 padding: '8px 16px',
                 backgroundColor: '#1677ff',
                 color: 'white',
                 border: 'none',
                 borderRadius: 4,
-                cursor: selectedSubdivision ? 'pointer' : 'not-allowed'
+                cursor: selectedSubdivision ? 'pointer' : 'not-allowed',
+                zIndex:100,
               }}
             >
               Get Data →
@@ -177,44 +181,49 @@ export default function SubdivisionSelector() {
             ← Back
           </button>
         
-        <div style={{ flexGrow: 1,maxWidth:2000 }}>
-          <div style={{ marginBottom: 24 }}>
-  <div style={{ fontWeight: 600, marginBottom: 8 }}>
-    Showing details for sub-division {selectedSubdivision}
-  </div>
-  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-    {(showAllMeters ? meterIdsForArea : meterIdsForArea.slice(0, 20)).map((meterId, index) => (
-      <div
-        key={index}
-        style={{
-          padding: '4px 12px',
-          backgroundColor: '#f0f0f0',
-          borderRadius: '999px',
-          fontSize: 14,
-        }}
-      >
-        {meterId}
-      </div>
-    ))}
-    {meterIdsForArea.length > 20 && (
-      <div
-        style={{
-          padding: '4px 12px',
-          cursor: 'pointer',
-          color: '#1677ff',
-          fontSize: 14,
-        }}
-        onClick={() => setShowAllMeters(!showAllMeters)}
-      >
-        {showAllMeters ? 'Show Less' : 'Show All'}
-      </div>
-    )}
-  </div>
-</div>
-
-
-
-            
+            <div style={{ flexGrow: 1,maxWidth:2000 }}>
+              <div style={{ marginBottom: 24 }}>
+            <div style={{ fontFamily: 'GT Walsheim Pro',fontWeight:500,fontSize:'18px',color:'#27272A',letterSpacing:'0px'}}>
+              Showing details for sub-division {selectedSubdivision}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px',padding: '16px 0px 0px' }}>
+              {(showAllMeters ? meterIdsForArea : meterIdsForArea.slice(0, 20)).map((meterId, index) => (
+                <div
+                  key={index}
+                  style={{
+                    padding: '4px 12px 4px 12px',
+                    display:"flex",
+                    backgroundColor: '#EBEBF0',
+                    borderRadius: '30px',
+                    fontSize: 16,
+                    fontFamily: 'GT Walsheim Pro',
+                    fontWeight:500,
+                    letterSpacing:'0px',
+                    color:'#27272A',
+                    width:'125px',
+                    height:'32px',
+                    justifyContent:"center",
+                    alignItems:"center"
+                  }}
+                >
+                  {meterId.replace(/^sc/,'SC')}
+                </div>
+              ))}
+              {meterIdsForArea.length > 20 && (
+                <div
+                  style={{
+                    padding: '4px 12px',
+                    cursor: 'pointer',
+                    color: '#1677ff',
+                    fontSize: 14,
+                  }}
+                  onClick={() => setShowAllMeters(!showAllMeters)}
+                >
+                  {showAllMeters ? 'Show Less' : 'Show All'}
+                </div>
+              )}
+            </div>
+          </div>
               <Card title="Combined Data" style={{ marginBottom: 24 }}>
                 <div className="subdivision-container">
                   <div className="pie-charts-box">
@@ -233,9 +242,12 @@ export default function SubdivisionSelector() {
               </Card>
 
               
-              <Card title="Reliability Indices" style={{ marginBottom: 24 }}>
+              <Card title="Reliability Indices" style={{ marginBottom: 24}}>
                 <div
                   style={{
+                    fontFamily: 'GT Walsheim Pro',
+                    fontWeight: 500,
+                    fontSize: 18,
                     display: 'flex',
                     flexWrap: 'wrap',
                     gap: '24px 40px',
@@ -369,21 +381,21 @@ export default function SubdivisionSelector() {
               </Card>
 
                 {qosData && (
-                  <Card title="Power Factor Averages" style={{ marginBottom: 24 }}>
+                  
                     <QualityOfSupplyAggregation data={qosData} />
-                  </Card>
+                  
                 )}
 
                 {pqData && (
-                  <Card title="Power Quality Aggregated Data" style={{ marginBottom: 24 }}>
+                  
                     <PowerQualityAggregation data={pqData} />
-                  </Card>
+                  
                 )}
 
                 {voltageData && (
-                  <Card title="Voltage Interruptions Aggregated Data">
+                  
                     <VoltageInterruptionsAggregation data={voltageData} />
-                  </Card>
+                  
                 )}
               </div>
             
