@@ -4,7 +4,7 @@
   background-color: #ffffff;
   color: #222;
   font-family: 'GT Walsheim Pro','Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'GT Walsheim Pro';
-  padding: 20px;
+  padding: 24px;
   box-sizing: border-box;
   position: relative;
 }
@@ -19,7 +19,9 @@
 .heading {
   margin-bottom: 20px;
   text-align: left;
-  
+  position: relative;
+  top: -32px;
+  left:24px;
   color: var(--text-primary, #27272A);
 font-family: "GT Walsheim Pro";
 font-size: 20px;
@@ -125,6 +127,9 @@ select option {
 
 /* Table */
 .table {
+  position: relative;
+  top:12;
+  left:0;
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
