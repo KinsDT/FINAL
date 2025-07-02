@@ -1,7 +1,15 @@
 import React from 'react';
 import { Button } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { GlobalOutlined, EnvironmentOutlined, BarChartOutlined } from '@ant-design/icons';
+
+// Import SVGs as React components
+import { ReactComponent as TelescopeIcon } from '../assets/telescope.svg';
+import { ReactComponent as MapIcon } from '../assets/map.svg';
+import { ReactComponent as MeterIcon } from '../assets/meter.svg';
+
+const ICON_SIZE = 20;
+const ACTIVE_COLOR = "#1773BE"; 
+const INACTIVE_COLOR = "#fff";  
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -16,32 +24,42 @@ export default function Sidebar() {
         borderRight: '1px solid #ddd',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        gap: '12px',
-        height: '300vh',
+        alignItems: 'flex-start',
+        gap: '8px',
+        height: '100vh',
+        width: '200px',
+        minWidth: '200px',
+        maxWidth: '200px'
       }}
     >
-      <div style={{ marginBottom: '24px' }}>
+      <div style={{ marginBottom: '15px', width: '100%' }}>
         <img
           src="/kimbal-logo.png"
           alt="Logo"
-          style={{ width: '85%', objectFit: 'contain' }}
+          style={{ width: '80%', objectFit: 'contain' }}
         />
       </div>
 
       <Button
         type="text"
-        icon={<GlobalOutlined />}
+        icon={
+          <TelescopeIcon
+            width={ICON_SIZE}
+            height={ICON_SIZE}
+            style={{ marginRight: 8, verticalAlign: 'middle' }}
+            // For most SVGs, fill changes the icon color. If not, try stroke.
+            fill={isActive('/') ? ACTIVE_COLOR : INACTIVE_COLOR}
+          />
+        }
         style={{
-          width: '100%',
+          fontSize: '16px',
           textAlign: 'left',
           padding: '8px 12px',
           borderRadius: '8px',
-          background: isActive('/') ? '#bae7ff' : 'transparent',
-          color: isActive('/') ? '#1890ff' : '#000',
-          fontWeight: 500,
+          background: isActive('/') ? '#ECF4FA' : 'transparent',
+          color: isActive('/') ? ACTIVE_COLOR : '#000',
+          fontWeight: 400,
           fontFamily: 'GT Walsheim Pro'
-          
         }}
         onClick={() => navigate('/')}
       >
@@ -50,15 +68,23 @@ export default function Sidebar() {
 
       <Button
         type="text"
-        icon={<EnvironmentOutlined />}
+        icon={
+          <MapIcon
+            width={ICON_SIZE}
+            height={ICON_SIZE}
+            style={{ marginRight: 8, verticalAlign: 'middle' ,
+            color: isActive('/Secondpage') ? ACTIVE_COLOR : INACTIVE_COLOR
+            }}
+          />
+        }
         style={{
-          width: '100%',
+          fontSize: '16px',
           textAlign: 'left',
           padding: '8px 12px',
           borderRadius: '8px',
-          background: isActive('/Secondpage') ? '#bae7ff' : 'transparent',
-          color: isActive('/Secondpage') ? '#1890ff' : '#000',
-          fontWeight: 500,
+          background: isActive('/Secondpage') ? '#ECF4FA' : 'transparent',
+          color: isActive('/Secondpage') ? ACTIVE_COLOR : '#000',
+          fontWeight: 400,
           fontFamily: 'GT Walsheim Pro'
         }}
         onClick={() => navigate('/Secondpage')}
@@ -68,23 +94,28 @@ export default function Sidebar() {
 
       <Button
         type="text"
-        icon={<BarChartOutlined />}
+        icon={
+          <MeterIcon
+            width={ICON_SIZE}
+            height={ICON_SIZE}
+            style={{ marginRight: 8, verticalAlign: 'middle' }}
+            fill={isActive('/Thirdpage') ? ACTIVE_COLOR : INACTIVE_COLOR}
+          />
+        }
         style={{
-          width: '100%',
+          fontSize: '16px',
           textAlign: 'left',
           padding: '8px 12px',
           borderRadius: '8px',
-          background: isActive('/Thirdpage') ? '#bae7ff' : 'transparent',
-          color: isActive('/Thirdpage') ? '#1890ff' : '#000',
-          fontWeight: 500,
-          fontFamily:'GT Walsheim Pro'
+          background: isActive('/Thirdpage') ? '#ECF4FA' : 'transparent',
+          color: isActive('/Thirdpage') ? ACTIVE_COLOR : '#000',
+          fontWeight: 400,
+          fontFamily: 'GT Walsheim Pro'
         }}
         onClick={() => navigate('/Thirdpage')}
       >
         Meter Details
       </Button>
-
-      
     </div>
   );
 }

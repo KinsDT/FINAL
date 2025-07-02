@@ -1,7 +1,14 @@
 import React from "react";
-import { Card, Row, Col, Statistic } from "antd";
+import { Spin,Card, Row, Col, Statistic } from "antd";
 
-export default function PowerQualityAggregation({ data }) {
+export default function PowerQualityAggregation({ data,loading }) {
+  if (loading){
+    return(
+          <div style={{ minHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Spin size="large" tip="Loading..."/>
+          </div>
+        );
+  }
   if (!data || data.length === 0) return <div>No data available</div>;
 
   // Filter for non-zero voltage phase values
@@ -60,7 +67,7 @@ export default function PowerQualityAggregation({ data }) {
   return (
   <Card
     title="Power Quality - Aggregated Data"
-    style={{ marginTop: 16, marginBottom: 24 }}
+    style={{ marginTop: 16, marginBottom: 24,borderColor:'#DDDDE3',borderRadius:16 }}
   >
     <div
       style={{

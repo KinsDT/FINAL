@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Select, Card, Divider, Row, Col, Tooltip } from "antd";
+import { Select,Spin, Card, Divider, Row, Col, Tooltip } from "antd";
 import useMeterData from "../hooks/useMeterData";
 import PhasePieChart from "./PhasePieChart";
 import VoltageInterruptionsAggregation from "./VoltageInterruptionsAggregation";
@@ -29,6 +29,7 @@ export default function SubdivisionSelector() {
   const [selectedSubdivision, setSelectedSubdivision] = useState(null);
   const [selectedParameter, setSelectedParameter] = useState(null);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { locations } = useMeterData();
   const [reliabilityData, setReliabilityData] = useState([]);
@@ -47,6 +48,7 @@ export default function SubdivisionSelector() {
 
   React.useEffect(() => {
     if (!showDashboard || !selectedSubdivision) return;
+      // Start loading
 
     fetch(`http://localhost:5000/api/reliability-indices?area=${areaMap[selectedSubdivision]}`)
       .then((res) => res.json())
@@ -90,12 +92,12 @@ export default function SubdivisionSelector() {
           ca_avg:         avg("ca"),
         });
       })
-      .catch(console.error);
+      .catch(console.error)
   }, [showDashboard, selectedSubdivision]);
 
   React.useEffect(() => {
     if (!showDashboard || !meterIdsCSV) return;
-
+    setLoading(true);
     const fetchData = async () => {
     try {
       const [voltageRes, pqRes, qosRes] = await Promise.all([
@@ -113,6 +115,8 @@ export default function SubdivisionSelector() {
       setQosData(qosJson);
     } catch (error) {
       console.error("Error fetching region data:", error);
+    }finally {
+      setLoading(false);  // Set loading to false after data is fetched
     }
   };
 
@@ -121,6 +125,7 @@ export default function SubdivisionSelector() {
 
   return (
     <div style={{ padding: 24,backgroundColor: '#FFFFFF' }}>
+      
       {!showDashboard ? (
         <>
           <h2 style={{fontFamily:'GT Walsheim Pro',fontWeight:500,fontSize:20,marginBottom:16}}>Area-wise Dashboard</h2>
@@ -153,10 +158,10 @@ export default function SubdivisionSelector() {
                 right:60,
                 bottom:24,
                 padding: '8px 16px',
-                backgroundColor: '#1677ff',
+                backgroundColor: '#1773BE',
                 color: 'white',
                 border: 'none',
-                borderRadius: 4,
+                borderRadius: 8,
                 cursor: selectedSubdivision ? 'pointer' : 'not-allowed',
                 zIndex:100,
               }}
@@ -172,13 +177,15 @@ export default function SubdivisionSelector() {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#1677ff',
-              fontSize: 16,
+              color: '#27272A',
+              fontSize: 20,
               marginBottom: 16,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              fontFamily:'GT Walsheim Pro',
+              fontWeight:500,
             }}
           >
-            ← Back
+            ← Area-wise Dashboard
           </button>
         
             <div style={{ flexGrow: 1,maxWidth:2000 }}>
@@ -224,7 +231,9 @@ export default function SubdivisionSelector() {
               )}
             </div>
           </div>
-              <Card title="Combined Data" style={{ marginBottom: 24 }}>
+          
+              <Card title="Combined Data" style={{ marginBottom: 24,borderColor:'#DDDDE3',borderRadius:16 }}>
+                
                 <div className="subdivision-container">
                   <div className="pie-charts-box">
                     <PhasePieChart
@@ -239,10 +248,11 @@ export default function SubdivisionSelector() {
                     />
                   </div>
                 </div>
+                
               </Card>
 
               
-              <Card title="Reliability Indices" style={{ marginBottom: 24}}>
+              <Card title="Reliability Indices" style={{ marginBottom: 24,borderColor:'#DDDDE3',borderRadius:16}}>
                 <div
                   style={{
                     fontFamily: 'GT Walsheim Pro',
@@ -379,24 +389,17 @@ export default function SubdivisionSelector() {
                   </div>
                 </div>
               </Card>
-
+              <Spin spinning={loading}>
                 {qosData && (
-                  
-                    <QualityOfSupplyAggregation data={qosData} />
-                  
+                    <QualityOfSupplyAggregation data={qosData} loading={loading}/>
                 )}
-
                 {pqData && (
-                  
-                    <PowerQualityAggregation data={pqData} />
-                  
+                    <PowerQualityAggregation data={pqData} loading={loading} />
                 )}
-
                 {voltageData && (
-                  
-                    <VoltageInterruptionsAggregation data={voltageData} />
-                  
+                    <VoltageInterruptionsAggregation data={voltageData} loading={loading} />
                 )}
+              </Spin>
               </div>
             
         </>
