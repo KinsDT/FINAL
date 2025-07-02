@@ -515,42 +515,64 @@ export default function MeterSearch() {
       {formatDate(fromDate)}{fromDate && toDate ? " - " : ""}{formatDate(toDate)}
     </div>
   </div>
-              <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-                <button
-                  style={{
-                    background: viewMode === "table" ? "#F6F8FF" : "#fff",
-                    color: viewMode === "table" ? "#1773BE" : "#27272A",
-                    position: "relative",
-                    left: -1,
-                    top: 0,
-                    border: "1px solid #E7E7EC",
-                    borderRadius: 8,
-                    padding: "6px 18px",
-                    fontWeight: 600,
-                    cursor: "pointer"
-                  }}
-                  onClick={() => setViewMode("table")}
-                >
-                  Table View
-                </button>
-                <button
-                  style={{
-                    position: "relative",
-                    left: -1,
-                    top: 0,
-                    background: viewMode === "graph" ? "#F6F8FF" : "#fff",
-                    color: viewMode === "graph" ? "#1773BE" : "#27272A",
-                    border: "1px solid #E7E7EC",
-                    borderRadius: 8,
-                    padding: "6px 18px",
-                    fontWeight: 600,
-                    cursor: "pointer"
-                  }}
-                  onClick={() => setViewMode("graph")}
-                >
-                  Graphical View
-                </button>
-              </div>
+              <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    borderRadius: 10,
+    border: "1.5px solid #E7E7EC",
+    background: "#fff",
+    overflow: "hidden",
+    width: 284,
+    height: 48,
+    padding: 4,
+    marginLeft: "auto",
+    position: "relative",
+  }}
+>
+  <button
+    onClick={() => setViewMode("table")}
+    style={{
+      flex: 1,
+      border: 1,
+      outline: "none",
+      background: viewMode === "table" ? "#E9F3FF" : "transparent",
+      color: viewMode === "table" ? "#1773BE" : "#27272A",
+      fontWeight: 500,
+      fontSize: 16,
+      height: 48,
+      width: "100%",
+      cursor: "pointer",
+      transition: "background 0.2s, color 0.2s",
+      boxShadow: "0 4 12 0 rgba(0, 0, 0, 0.08)",
+      borderRadius: 6,
+      zIndex: 10,
+    }}
+  >
+    Table View
+  </button>
+  <button
+    onClick={() => setViewMode("graph")}
+    style={{
+      flex: 1,
+      border: "none",
+      outline: "none",
+      background: viewMode === "graph" ? "#E9F3FF" : "transparent",
+      color: viewMode === "graph" ? "#1773BE" : "#27272A",
+      fontWeight: 500,
+      fontSize: 17,
+      height: 44,
+      cursor: "pointer",
+      transition: "background 0.2s, color 0.2s",
+      boxShadow: "none",
+      borderRadius: 0,
+      zIndex: 1,
+    }}
+  >
+    Graphical View
+  </button>
+</div>
+
             </div>
             {/* --- TABLE --- */}
             {viewMode === "table" && (
