@@ -4,7 +4,7 @@
   background-color: #ffffff;
   color: #222;
   font-family: 'GT Walsheim Pro','Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'GT Walsheim Pro';
-  padding: 20px;
+  padding: 24px;
   box-sizing: border-box;
   position: relative;
 }
@@ -19,7 +19,9 @@
 .heading {
   margin-bottom: 20px;
   text-align: left;
-  
+  position: relative;
+  top: -32px;
+  left:24px;
   color: var(--text-primary, #27272A);
 font-family: "GT Walsheim Pro";
 font-size: 20px;
@@ -39,7 +41,7 @@ line-height: normal;
 
 /* Select */
 .select {
-  padding: 10px;
+  padding: 1px;
   border-radius: 6px;
   border: 1px solid #ccc;
   background-color: #fff;
@@ -47,6 +49,12 @@ line-height: normal;
   min-width: 180px;
   cursor: pointer;
   font-size: 1rem;
+}
+
+select option {
+  color: #27272A;
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-size: 16px;
 }
 
 /* Input */
@@ -119,6 +127,9 @@ line-height: normal;
 
 /* Table */
 .table {
+  position: relative;
+  top:12;
+  left:0;
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -400,4 +411,152 @@ input:checked + .slider:before {
   }
 }
 
+/* Container and input box */
+.meter-select .ant-select {
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-size: 16px;
+  width:140px;
+  border-radius: 0 12px 12px 0; /* rounded corners on the right */
+  color: #e0bb16;
+  background-color: #18171a;
+}
+
+.meter-select .ant-select-selector {
+  border-radius: 0 12px 12px 0 !important; /* match your rounded corners */
+  border-color: #030303 !important;
+  background-color: #fff !important;
+  padding: 8px 12px !important;
+}
+
+/* Selected tags */
+.meter-select .ant-select-selection-item {
+  background-color: #EBEBF0 !important;
+  color: #27272A !important;
+  font-weight: 600;
+  border-radius: 8px !important;
+  padding: 0 8px;
+}
+
+/* Dropdown menu */
+.meter-select .ant-select-dropdown {
+  border-radius: 0 12px 12px 0 !important;;
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-size: 16px;
+  color: #27272A;
+}
+
+/* Dropdown options */
+.meter-select .ant-select-item-option {
+  padding: 8px 16px !important;
+}
+
+/* Hovered option */
+.meter-select .ant-select-item-option-active {
+  background-color: #e5e3f8 !important;
+}
+
+/* Selected option */
+.meter-select .ant-select-item-option-selected {
+  font-weight: 600;
+  background-color: #1773BE !important;
+  color: white !important;
+}
+
+.parameter-select .ant-select {
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-size: 16px;
+  width:180px;
+  border-radius: 12px 0 0 12px; /* rounded corners on the left */
+  background-color: #ffffff;
+}
+
+.parameter-select .ant-select-selector {
+  border-radius: 12px 12px 12px 12px !important; /* match your rounded corners */
+  border-color: #030303 !important;
+  background-color: #fff !important;
+  padding: 8px 12px !important;
+}
+
+/* Selected tags */
+.parameter-select .ant-select-selection-item {
+  background-color: #ffffff !important;
+  color: #27272A !important;
+  font-weight: 600;
+  border-radius: 8px !important;
+  padding: 0 8px;
+}
+
+/* Dropdown menu */
+.parameter-select .ant-select-dropdown {
+  border-radius: 12px !important;
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-size: 16px;
+  color: #27272A;
+}
+
+/* Dropdown options */
+.parameter-select .ant-select-item-option {
+  padding: 8px 16px !important;
+}
+
+/* Hovered option */
+.parameter-select .ant-select-item-option-active {
+  background-color: #e5e3f8 !important;
+}
+
+/* Selected option */
+.parameter-select .ant-select-item-option-selected {
+  font-weight: 600;
+  background-color: #1773BE !important;
+  color: white !important;
+}
+
+.subdivision-select .ant-select {
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-size: 16px;
+  width:140px;
+  color: #e0bb16;
+  background-color: #18171a;
+}
+
+.subdivision-select .ant-select-selector {
+  border-radius: 12px 0 0 12px !important; /* match your rounded corners */
+  border-color: #030303 !important;
+  background-color: #fff !important;
+  padding: 8px 12px !important;
+}
+
+/* Selected tags */
+.subdivision-select .ant-select-selection-item {
+  background-color: #ffffff !important;
+  color: #27272A !important;
+  font-weight: 600;
+  border-radius: 8px !important;
+  padding: 0 8px;
+}
+
+/* Dropdown menu */
+.subdivision-select .ant-select-dropdown {
+  border-radius: 12px !important;
+  font-family: 'GT Walsheim Pro', Arial, sans-serif;
+  font-size: 16px;
+  color: #27272A;
+}
+
+/* Dropdown options */
+.subdivision-select .ant-select-item-option {
+  padding: 8px 16px !important;
+}
+
+/* Hovered option */
+.subdivision-select .ant-select-item-option-active {
+  background-color: #e5e3f8 !important;
+}
+
+/* Selected option */
+.subdivision-select .ant-select-item-option-selected {
+  font-weight: 600;
+  background-color: #1773BE !important;
+  color: white !important;
+}
 
