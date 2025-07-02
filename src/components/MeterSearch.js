@@ -10,6 +10,8 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { Select } from 'antd';
+import 'antd/dist/reset.css';
 import '../styles/MeterSearch.css';
 
 ChartJS.register(
@@ -22,7 +24,6 @@ ChartJS.register(
   Legend
 );
 
-// ToggleSwitch unchanged
 const ToggleSwitch = ({ onChange, isChecked }) => (
   <label className="switch">
     <input
@@ -36,7 +37,6 @@ const ToggleSwitch = ({ onChange, isChecked }) => (
 
 export default function MeterSearch() {
   const [tableName, setTableName] = useState("");
-  const [meterIdsInput, setMeterIdsInput] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [data, setData] = useState([]);
@@ -49,11 +49,49 @@ export default function MeterSearch() {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
   const [goToPageInput, setGoToPageInput] = useState("");
+  const [areas, setAreas] = useState([]);
+  const [selectedArea, setSelectedArea] = useState("");
+  const [meterIds, setMeterIds] = useState([]);
 
   useEffect(() => {
     setCurrentPage(1);
     setGoToPageInput("");
   }, [data]);
+
+  // Fetch table names
+  useEffect(() => {
+    fetch("http://localhost:5000/api/meter-data/tables")
+      .then((res) => res.json())
+      .then((json) => setTables(json.tables || []))
+      .catch(() => setTables([]));
+  }, []);
+
+  // Fetch areas (sub-divisions)
+  useEffect(() => {
+    fetch('http://localhost:5000/api/meter-data/areas')
+      .then(res => res.json())
+      .then(data => setAreas(data.areas || []))
+      .catch(() => setAreas([]));
+  }, []);
+
+  // Fetch meter IDs for selected area
+  useEffect(() => {
+    if (!selectedArea) {
+      setMeterIds([]);
+      setSelectedMeterIds([]);
+      return;
+    }
+    fetch(`http://localhost:5000/api/meter-data/meter_ids?area=${encodeURIComponent(selectedArea)}`)
+      .then(res => res.json())
+      .then(data => {
+        setMeterIds(data.meter_ids || []);
+        setSelectedMeterIds([]); // reset selection
+      })
+      .catch(() => {
+        setMeterIds([]);
+        setSelectedMeterIds([]);
+      });
+  }, [selectedArea]);
 
   const tableDisplayNames = {
     daily_qos_undervoltage: "Under-Voltage",
@@ -97,26 +135,14 @@ export default function MeterSearch() {
     datetime: "Date Time"
   };
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/meter-data/tables")
-      .then((res) => res.json())
-      .then((json) => setTables(json.tables || []))
-      .catch(() => setTables([]));
-  }, []);
-
   const fetchData = async () => {
     if (!tableName) {
       setError("Please select a table");
       setData([]);
       return;
     }
-    const ids = meterIdsInput
-      .split(",")
-      .map((id) => id.trim().toUpperCase())
-      .filter(Boolean);
-
-    if (ids.length === 0) {
-      setError("Please enter at least one Meter ID");
+    if (!selectedMeterIds.length) {
+      setError("Please select at least one Meter ID");
       setData([]);
       return;
     }
@@ -126,7 +152,7 @@ export default function MeterSearch() {
     let combinedData = [];
 
     try {
-      for (const rawId of ids) {
+      for (const rawId of selectedMeterIds) {
         const url = new URL("http://localhost:5000/api/meter-data/data");
         url.searchParams.append("table", tableName);
         url.searchParams.append("meter_id", rawId);
@@ -315,89 +341,100 @@ export default function MeterSearch() {
 
         {/* Modern stacked controls */}
         <div style={{ marginBottom: 32 }}>
-          <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
-            Parameter Name
-          </label>
-          <select
-            value={tableName}
-            onChange={e => setTableName(e.target.value)}
-            style={{
-              width: "360px",
-              padding: "12px",
-              borderRadius: 10,
-              border: "1px solid #DDDDE3",
-              background: "#fff",
-              fontSize: 16,
-              fontWeight:400,
-              color: tableName ? "#27272A" : "#A1A1AA",
-              outline: "none"
-            }}
-          >
-            <option value="">Select Parameter</option>
-            {tables.map(table => (
-              <option key={table} value={table}>
-                {tableDisplayNames[table] || table}
-              </option>
-            ))}
-          </select>
-        </div>
+  <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A", width: 360 }}>
+    Parameter Name
+  </label>
+  <Select
+    className="parameter-select"
+    value={tableName || undefined}
+    onChange={value => setTableName(value)}
+    placeholder="Select Parameter"
+    style={{
+      width: 360,
+      
+      fontSize: 16,
+      fontWeight: 400,
+      color: "#27272A",
+      background: "#fff"
+    }}
+    options={tables.map(table => ({
+      value: table,
+      label: tableDisplayNames[table] || table
+    }))}
+    allowClear
+    showSearch
+    filterOption={(input, option) =>
+      (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+    }
+  />
+</div>
 
-        <div style={{ marginBottom: 32 }}>
-          <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
-            Meter IDs
-          </label>
-          <div style={{ display: "flex", gap: 0 }}>
-            <select
-              style={{
-                flex: 1,
-                padding: "16px",
-                border: "1.5px solid #E7E7EC",
-                borderRadius: "12px 0 0 12px",
-                background: "#fff",
-                fontSize: 16,
-                color: "#A1A1AA"
-              }}
-              disabled
-            >
-              <option>Select Sub-division</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Select Meters"
-              value={meterIdsInput}
-              onChange={e => setMeterIdsInput(e.target.value)}
-              style={{
-                flex: 2,
-                padding: "16px",
-                border: "1.5px solid #E7E7EC",
-                borderLeft: "none",
-                borderRadius: "0 12px 12px 0",
-                background: "#F4F3F8",
-                fontSize: 16,
-                color: "#27272A"
-              }}
-            />
-          </div>
-        </div>
+<div style={{ marginBottom: 32 }}>
+  <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
+    Meter IDs
+  </label>
+  <div style={{ display: "flex", gap: 0 }}>
+    <Select
+      className="subdivision-select"
+      value={selectedArea || undefined}
+      onChange={value => setSelectedArea(value)}
+      placeholder="Select Sub-division"
+      
+      options={areas.map(area => ({
+        value: area,
+        label: area
+      }))}
+      allowClear
+      showSearch
+      filterOption={(input, option) =>
+        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+      }
+    />
+    <Select
+      className=".meter-select "
+      mode="multiple"
+      allowClear
+      showSearch
+      placeholder="Select Meter(s)"
+      value={selectedMeterIds}
+      onChange={setSelectedMeterIds}
+      style={{
+        flex: 2,
+        minWidth: 0,
+        padding: 0,
+        border: "1.5px solid #E7E7EC",
+        
+        borderRadius: "0 12px 12px 0",
+        background: "#fff",
+        fontSize: 16,
+        color: "#27272A"
+      }}
+      disabled={!selectedArea}
+      options={meterIds.map(id => ({ label: id, value: id }))}
+    />
+  </div>
+</div>
 
         <div style={{ marginBottom: 32 }}>
           <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
             Dates
           </label>
-          <div style={{ display: "flex", gap: 0 }}>
+          <div style={{display:"flex", gap: 0 }}>
             <input
               type="date"
               placeholder="Select Start Date"
               value={fromDate}
               onChange={e => setFromDate(e.target.value)}
               style={{
-                flex: 1,
-                padding: "16px",
-                border: "1.5px solid #E7E7EC",
+        
+                width:"180px",
+                padding: "12px",
+                border: "1px solid #DDDDE3",
                 borderRadius: "12px 0 0 12px",
                 background: "#fff",
                 fontSize: 16,
-                color: "#27272A"
+                color: "#27272A",
+                
               }}
             />
             <input
@@ -406,14 +443,16 @@ export default function MeterSearch() {
               value={toDate}
               onChange={e => setToDate(e.target.value)}
               style={{
-                flex: 1,
-                padding: "16px",
-                border: "1.5px solid #E7E7EC",
+                
+                padding: "12px",
+                width:"180px",
+                border: "1px solid #DDDDE3",
                 borderLeft: "none",
                 borderRadius: "0 12px 12px 0",
                 background: "#fff",
                 fontSize: 16,
-                color: "#27272A"
+                color: "#27272A",
+                
               }}
             />
           </div>
@@ -453,10 +492,10 @@ export default function MeterSearch() {
           disabled={loading}
           style={{
             padding: "12px 32px",
-            backgroundColor: "#2967FF",
+            backgroundColor: "#1773BE",
             color: "#fff",
-            borderRadius: 12,
-            border: "none",
+            borderRadius: 10,
+            border: 1.5,
             fontSize: 16,
             fontWeight: 600,
             cursor: loading ? "not-allowed" : "pointer",
@@ -464,7 +503,7 @@ export default function MeterSearch() {
             boxShadow: "0 2px 8px rgba(41,103,255,0.07)"
           }}
         >
-          {loading ? "Loading..." : "Search"}
+          {loading ? "Loading..." : "Get Data"}
         </button>
 
         {error && <p style={{ color: "red", marginBottom: 24 }}>{error}</p>}
