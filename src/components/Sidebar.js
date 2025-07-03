@@ -116,6 +116,31 @@ export default function Sidebar() {
       >
         Meter Details
       </Button>
+      <Button
+        type="text"
+        icon={
+          <TelescopeIcon
+            width={ICON_SIZE}
+            height={ICON_SIZE}
+            style={{ marginRight: 8, verticalAlign: 'middle' }}
+            // For most SVGs, fill changes the icon color. If not, try stroke.
+            fill={isActive('/Fourthpage') ? ACTIVE_COLOR : INACTIVE_COLOR}
+          />
+        }
+        style={{
+          fontSize: '16px',
+          textAlign: 'left',
+          padding: '8px 12px',
+          borderRadius: '8px',
+          background: isActive('/Fourthpage') ? '#ECF4FA' : 'transparent',
+          color: isActive('/Fourthpage') ? ACTIVE_COLOR : '#000',
+          fontWeight: 400,
+          fontFamily: 'GT Walsheim Pro'
+        }}
+        onClick={() => navigate('/Fourthpage')}
+      >
+        Flag View
+      </Button>
     </div>
   );
 }
