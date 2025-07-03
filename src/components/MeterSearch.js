@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+
+import { DownloadTableExcel } from 'react-export-table-to-excel';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,7 +15,8 @@ import { Line } from "react-chartjs-2";
 import { Select } from 'antd';
 import 'antd/dist/reset.css';
 import '../styles/MeterSearch.css';
-
+import { ReactComponent as Download } from '../assets/download.svg';
+import { Drawer, Input } from 'antd';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -42,6 +45,10 @@ export default function MeterSearch() {
   const [selectedArea, setSelectedArea] = useState("");
   const [meterIds, setMeterIds] = useState([]);
   const [showTable, setShowTable] = useState(false);
+  const tableRef = useRef(null);
+  const [isMeterDrawerOpen, setIsMeterDrawerOpen] = useState(false);
+  const [meterDrawerSearch, setMeterDrawerSearch] = useState("");
+
 
   useEffect(() => {
     setCurrentPage(1);
@@ -184,6 +191,8 @@ export default function MeterSearch() {
     }
   };
 
+  
+
   const allMeterIds = useMemo(() => {
     const ids = Array.from(new Set(data.map(row => row.meter_id).filter(Boolean)));
     return ids;
@@ -275,15 +284,20 @@ export default function MeterSearch() {
   return (
     <div className="page" style={{ background: "#fff", minHeight: "100vh" }}>
       <div className="container" style={{ maxWidth: 1000, margin: "32px auto", padding: "0 24px" }}>
-        <h1 className="heading" style={{
+        
+
+        {!showTable && (<h1 className="heading" style={{
           fontFamily: "'GT Walsheim Pro', Arial, sans-serif",
           fontWeight: 700,
           fontSize: 24,
           marginBottom: 24,
-          color: "#27272A"
+          color: "#27272A",
+          position: "relative",
+          left:0,
         }}>
           Meter-wise Dashboard
         </h1>
+        )}
 
         {!showTable ? (
           <>
@@ -322,15 +336,19 @@ export default function MeterSearch() {
               <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
                 Meter IDs
               </label>
-              <div style={{ display: "flex", gap: 0 }}>
+              <div style={{display:'flex',gap: 0 }}>
                 <Select
                   className="subdivision-select"
                   value={selectedArea || undefined}
                   onChange={value => setSelectedArea(value)}
                   placeholder="Select Sub-division"
                   style={{
-                    flex: 1,
+                    height: "36px",
+                    lineHeight: "36px",
+                    width: "180px",
                     minWidth: 0,
+                                        border: "1px solid #E7E7EC",
+
                     borderRadius: "12px 0 0 12px",
                     fontSize: 16,
                     color: "#27272A",
@@ -355,14 +373,19 @@ export default function MeterSearch() {
                   value={selectedMeterIds}
                   onChange={setSelectedMeterIds}
                   style={{
-                    flex: 2,
+                    
+                    height: "36px",
+                    lineHeight: "36px",
+                    flex:1,
+                
                     minWidth: 0,
                     padding: 0,
-                    border: "1.5px solid #E7E7EC",
+                    border: "1px solid #DDDDE3",
                     borderRadius: "0 12px 12px 0",
                     background: "#fff",
                     fontSize: 16,
                     color: "#27272A"
+                    
                   }}
                   disabled={!selectedArea}
                   options={meterIds.map(id => ({ label: id, value: id }))}
@@ -447,6 +470,9 @@ export default function MeterSearch() {
                 fontWeight: 600,
                 cursor: loading ? "not-allowed" : "pointer",
                 marginBottom: 32,
+                position: "relative",
+                top: 120,
+                left: 800 ,
                 boxShadow: "0 2px 8px rgba(41,103,255,0.07)"
               }}
             >
@@ -457,128 +483,177 @@ export default function MeterSearch() {
         ) : (
           <>
             {/* --- BACK BUTTON --- */}
-            <button
-              onClick={() => setShowTable(false)}
-              style={{
-                position: "relative",
-                top: -84,
-                left: -8,
-                marginBottom: 12,
-                background: "none",
-                border: "none",
-                color: "#1773BE",
-                fontWeight: 600,
-                fontSize: 16,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center"
-              }}
-            >
-              <span style={{ fontSize: 22, marginRight: 8 }}>&larr;</span>
-              
-            </button>
+            <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        marginBottom: 32,
+        marginTop: 4,
+        position: "relative",
+        top: -48,
+      }}
+    >
+      <button
+        onClick={() => setShowTable(false)}
+        style={{
+          background: "none",
+          border: "none",
+          color: "#222",
+          fontWeight: 400,
+          fontSize: 28,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          padding: 0,
+          marginRight: 6,
+          lineHeight: 1,
+        }}
+        aria-label="Back"
+      >
+        <span style={{ fontSize: 28, lineHeight: 1 }}>&larr;</span>
+      </button>
+      <span
+        style={{
+          fontFamily: "'GT Walsheim Pro', Arial, sans-serif",
+          fontWeight: 700,
+          fontSize: 28,
+          color: "#222",
+          letterSpacing: 0,
+          lineHeight: 1.2,
+          display: "inline-block",
+          verticalAlign: "middle",
+        }}
+      >
+        Meter-wise Dashboard
+      </span>
+    </div>
+
+    
             {/* --- SUMMARY HEADER --- */}
             <div className="table-summary" style={{
     display: "flex",
     position: "relative",
-    top: -64,
+    
     alignItems: "center",
-    gap: 48,
-    marginBottom: 32,
+    gap: 6,
+    marginTop: 12,
+    marginBottom: 24,
     whiteSpace: "nowrap",
     fontSize: 16,
     fontFamily: "'GT Walsheim Pro', Arial, sans-serif",
-    fontWeight: 400
+    fontWeight: 400,
+    width: "100%",
+    boxSizing: "border-box",
   }}
 >
   <div>
-    <div style={{ color: "#B0B0B0", fontSize: 16, marginBottom: 2 }}>Parameter Name</div>
-    <div style={{ color: "#27272A", fontWeight: 500, fontSize: 16 }}>
+    <div style={{ color: "#B0B0B0", marginBottom: 2 }}>Parameter Name</div>
+    <div style={{ color: "#27272A", fontWeight: 500}}>
       {tableDisplayNames[tableName] || tableName}
     </div>
   </div>
   <div>
-    <div style={{ color: "#B0B0B0", fontSize: 16, marginBottom: 2 }}>Sub-division</div>
-    <div style={{ color: "#27272A", fontWeight: 500, fontSize: 16 }}>
+    <div style={{ color: "#B0B0B0",  marginBottom: 2 }}>Sub-division</div>
+    <div style={{ color: "#27272A", fontWeight: 500}}>
       {selectedArea}
     </div>
   </div>
   <div>
-    <div style={{ color: "#B0B0B0", fontSize: 16, marginBottom: 2 }}>Meter IDs</div>
-    <div style={{ color: "#27272A", fontWeight: 500, fontSize: 16 }}>
-      {selectedMeterIds.join(", ")}
-    </div>
+  <div style={{ color: "#B0B0B0",  marginBottom: 2 }}>Meter IDs</div>
+  <div style={{ color: "#27272A", fontWeight: 500, display: "flex", alignItems: "center" }}>
+    {selectedMeterIds.length <= 2 ? (
+      selectedMeterIds.join(", ")
+    ) : (
+      <>
+        {selectedMeterIds.slice(0, 2).join(", ")}
+        <span
+          style={{
+            marginLeft: 8,
+            cursor: "pointer",
+            fontWeight: 700,
+            fontSize: 20,
+            padding: "0 8px",
+            borderRadius: 8,
+            background: "#f5f5fa",
+            display: "inline-flex",
+            alignItems: "center"
+          }}
+          onClick={() => setIsMeterDrawerOpen(true)}
+          title="Show all Meter IDs"
+        >
+          ...
+        </span>
+      </>
+    )}
   </div>
+</div>
+
   <div>
     <div style={{ color: "#B0B0B0", fontSize: 16, marginBottom: 2 }}>Dates</div>
     <div style={{ color: "#27272A", fontWeight: 500, fontSize: 16 }}>
-      {formatDate(fromDate)}{fromDate && toDate ? " - " : ""}{formatDate(toDate)}
-    </div>
+  {fromDate ? formatDate(fromDate) : "dd/mm/yyyy"}
+  { " - " }
+  {toDate ? formatDate(toDate) : "dd/mm/yyyy"}
+</div>
+
   </div>
-              <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    borderRadius: 10,
-    border: "1.5px solid #E7E7EC",
-    background: "#fff",
-    overflow: "hidden",
-    width: 284,
-    height: 48,
-    padding: 4,
-    marginLeft: "auto",
-    position: "relative",
-  }}
->
+              <div className="toggle-segmented-control">
   <button
+    className={viewMode === "table" ? "active" : ""}
     onClick={() => setViewMode("table")}
-    style={{
-      flex: 1,
-      border: 1,
-      outline: "none",
-      background: viewMode === "table" ? "#E9F3FF" : "transparent",
-      color: viewMode === "table" ? "#1773BE" : "#27272A",
-      fontWeight: 500,
-      fontSize: 16,
-      height: 48,
-      width: "100%",
-      cursor: "pointer",
-      transition: "background 0.2s, color 0.2s",
-      boxShadow: "0 4 12 0 rgba(0, 0, 0, 0.08)",
-      borderRadius: 6,
-      zIndex: 10,
-    }}
   >
     Table View
   </button>
   <button
+    className={viewMode === "graph" ? "active" : ""}
     onClick={() => setViewMode("graph")}
-    style={{
-      flex: 1,
-      border: "none",
-      outline: "none",
-      background: viewMode === "graph" ? "#E9F3FF" : "transparent",
-      color: viewMode === "graph" ? "#1773BE" : "#27272A",
-      fontWeight: 500,
-      fontSize: 17,
-      height: 44,
-      cursor: "pointer",
-      transition: "background 0.2s, color 0.2s",
-      boxShadow: "none",
-      borderRadius: 0,
-      zIndex: 1,
-    }}
   >
     Graphical View
   </button>
+</div>
+
+  <div>
+  <DownloadTableExcel
+    filename="meter-data.xlsx"
+    sheet="Sheet1"
+    currentTableRef={tableRef.current}
+  >
+    <button
+      style={{
+        background: "#fff",
+        border: "none",
+        borderRadius: "50%",
+        padding: 0,
+        display: "flex",
+        alignItems: "center",
+        cursor: "pointer",
+        marginLeft: 6,
+        marginRight: 6,
+        fontFamily: "'GT Walsheim Pro', Arial, sans-serif",
+        fontWeight: 600,
+        fontSize: 16,
+        color: "#1773BE",
+        transition: "background 0.2s, color 0.2s"
+        
+      }}
+      
+      aria-label="Download table as Excel"
+    >
+      <span style={{ display: "inline-flex", marginRight: 8 }}>
+    <Download width={40} height={40} />
+  </span>
+  
+</button>
+  </DownloadTableExcel>
 </div>
 
             </div>
             {/* --- TABLE --- */}
             {viewMode === "table" && (
               <div className="tableArea">
-                <div className="tableWrapper">
-                  <table className="table">
+                <div className="tableWrapper" style={{width: "100%", boxSizing: "border-box"}}>
+                  <table ref={tableRef}className="table" style={{ width: "100%" }}>
                     <thead>
                       <tr>
                         {columns.map((col) => (
@@ -806,6 +881,44 @@ export default function MeterSearch() {
             )}
           </>
         )}
+        <Drawer
+        title="Meter IDs"
+        placement="right"
+        width={400}
+        onClose={() => setIsMeterDrawerOpen(false)}
+        open={isMeterDrawerOpen}
+        bodyStyle={{ padding: 24 }}
+        closeIcon={null}
+      >
+        <Input
+          placeholder="Search Meter IDs"
+          style={{ marginBottom: 16 }}
+          onChange={e => setMeterDrawerSearch(e.target.value)}
+          allowClear
+        />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+          {selectedMeterIds
+            .filter(id => !meterDrawerSearch || id.toLowerCase().includes(meterDrawerSearch.toLowerCase()))
+            .map(id => (
+              <span
+                key={id}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: 12,
+                  background: "#f5f5fa",
+                  fontWeight: 600,
+                  fontSize: 15,
+                  marginBottom: 8,
+                  display: "inline-block",
+                  border: "1px solid #ececf1",
+                  color: "#222"
+                }}
+              >
+                {id}
+              </span>
+            ))}
+        </div>
+      </Drawer>
       </div>
     </div>
   );

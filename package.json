@@ -16,6 +16,7 @@
     "react": "^19.1.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.1.0",
+    "react-export-table-to-excel": "^1.0.6",
     "react-leaflet": "^5.0.0",
     "react-leaflet-heatmap-layer-v3": "^3.0.3-beta-1",
     "react-router-dom": "^7.6.2",

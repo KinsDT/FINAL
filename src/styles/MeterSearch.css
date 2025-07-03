@@ -118,12 +118,12 @@ select option {
 /* Table Wrapper */
 .tableWrapper {
   position: relative;
-  top: -64px;
+  
   border: 2px solid #e5e3f8;   /* Light purple border */
-  width:1192;
+  width:100%;
   border-radius: 16px;          /* Rounded corners */
   background: #fff;             /* White background */
-  padding: 0;                   /* Remove extra padding */
+                     /* Remove extra padding */
   margin: 0;
   overflow-x: auto;
 }
@@ -131,7 +131,7 @@ select option {
 /* Table */
 .table {
   position: relative;
-  top:12;
+  
   left:0;
   width: 100%;
   border-collapse: separate;
@@ -272,13 +272,11 @@ input:checked + .slider:before {
 
 .tableArea {
   position: relative;
-  padding-bottom: 60px; /* Height of the pagination bar */
+  padding-bottom: 60px;
+  width:100%; /* Height of the pagination bar */
 }
 
-.tableWrapper {
-  width:auto;
-  overflow-x: auto;
-}
+
 
 .paginationBar {
   position: absolute;
@@ -419,7 +417,8 @@ input:checked + .slider:before {
 .meter-select .ant-select {
   font-family: 'GT Walsheim Pro', Arial, sans-serif;
   font-size: 16px;
-  width:140px;
+  
+  height: auto;
   border-radius: 0 12px 12px 0; /* rounded corners on the right */
   color: #e0bb16;
   background-color: #18171a;
@@ -427,9 +426,11 @@ input:checked + .slider:before {
 
 .meter-select .ant-select-selector {
   border-radius: 0 12px 12px 0 !important; /* match your rounded corners */
-  border-color: #030303 !important;
+  border-color: #DDDDE3 !important;
   background-color: #fff !important;
-  padding: 8px 12px !important;
+  padding: 3px 4px !important;
+   /* Ensure the width matches the select box */
+   /* Ensure the height matches the select box */
 }
 
 /* Selected tags */
@@ -476,7 +477,7 @@ input:checked + .slider:before {
 
 .parameter-select .ant-select-selector {
   border-radius: 12px 12px 12px 12px !important; /* match your rounded corners */
-  border-color: #030303 !important;
+  border-color: #DDDDE3 !important;
   background-color: #fff !important;
   padding: 8px 12px !important;
 }
@@ -518,14 +519,15 @@ input:checked + .slider:before {
 .subdivision-select .ant-select {
   font-family: 'GT Walsheim Pro', Arial, sans-serif;
   font-size: 16px;
-  width:140px;
+  
   color: #e0bb16;
   background-color: #18171a;
 }
 
 .subdivision-select .ant-select-selector {
   border-radius: 12px 0 0 12px !important; /* match your rounded corners */
-  border-color: #030303 !important;
+  border-color: #DDDDE3 !important;
+  border-right: none !important; /* Remove right border */
   background-color: #fff !important;
   padding: 8px 12px !important;
 }
@@ -562,5 +564,43 @@ input:checked + .slider:before {
   font-weight: 600;
   background-color: #1773BE !important;
   color: white !important;
+}
+
+.toggle-segmented-control {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  border: 1.5px solid #E7E7EC;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(41,103,255,0.07);
+  width: 284px;
+  height: 48px;
+  padding: 4px;
+  margin-left: auto;
+  position: relative;
+  white-space: nowrap;
+}
+
+.toggle-segmented-control button {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #27272A;
+  font-weight: 500;
+  font-size: 16px;
+  height: 40px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.toggle-segmented-control button.active {
+  background: #E9F3FF;
+  color: #1773BE;
+}
+.toggle-segmented-control button:hover {
+  background: #F0F4FF;
+  color: #1773BE;
 }
 
