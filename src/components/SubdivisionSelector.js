@@ -204,7 +204,7 @@ export default function SubdivisionSelector() {
                     borderRadius: '30px',
                     fontSize: 16,
                     fontFamily: 'GT Walsheim Pro',
-                    fontWeight:500,
+                    fontWeight:400,
                     letterSpacing:'0px',
                     color:'#27272A',
                     width:'125px',

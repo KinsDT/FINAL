@@ -70,5 +70,71 @@
   letter-spacing: 0.5px;
 }
 
+@keyframes blinker {
+  50% { opacity: 0; }
+}
 
+.blinking {
+  animation: blinker 1s linear infinite;
+  color: red;
+}
 
+/*
+@keyframes marker-blink {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.8));
+  }
+  50% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.5));
+  }
+}
+
+.blinking-marker {
+  width: 25px;
+  height: 41px;
+  background: transparent;           
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;              
+}
+
+.blinking-marker-inner {
+  width: 25px;
+  height: 41px;
+  background: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png') no-repeat center;
+  background-size: contain;
+  animation: marker-blink 1.2s ease-in-out infinite;
+}
+*/
+
+@keyframes marker-blink {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(255, 0, 0, 1));
+  }
+  50% {
+    opacity: 0.2;
+    filter: drop-shadow(0 0 25px rgba(255, 0, 0, 0.8));
+  }
+}
+
+.blinking-marker {
+  width: 25px;
+  height: 41px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.blinking-marker-inner {
+  width: 25px;
+  height: 41px;
+  background: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png') no-repeat center;
+  background-size: contain;
+  animation: marker-blink 0.9s ease-in-out infinite; /* Faster + stronger */
+}
