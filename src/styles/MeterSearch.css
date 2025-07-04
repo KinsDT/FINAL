@@ -10,17 +10,14 @@
 }
 
 /* Container */
-.container {
-  max-width: 1100px;
-  margin: auto;
-}
+
 
 /* Heading */
 .heading {
   margin-bottom: 20px;
   text-align: left;
   position: relative;
-  top: -32px;
+  top: 0px;
   left:24px;
   color: var(--text-primary, #27272A);
 font-family: "GT Walsheim Pro";
@@ -118,6 +115,7 @@ select option {
 /* Table Wrapper */
 .tableWrapper {
   position: relative;
+  TOP: -36px; /* Adjusted to align with the heading */
   
   border: 2px solid #e5e3f8;   /* Light purple border */
   width:100%;
@@ -603,4 +601,46 @@ input:checked + .slider:before {
   background: #F0F4FF;
   color: #1773BE;
 }
+.graph-control-card {
+  background: #F8FAFC;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(41,103,255,0.04);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.graph-control-card label {
+  font-weight: 500;
+  color: #27272A;
+  margin-bottom: 4px;
+  display: block;
+}
+.add-graph-btn {
+  background: #1773BE;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 10px 24px;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.remove-graph-btn {
+  background: #fff;
+  border: 1px solid #E7E7EC;
+  border-radius: 8px;
+  color: #E53E3E;
+  font-weight: 600;
+  padding: 8px 16px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
 

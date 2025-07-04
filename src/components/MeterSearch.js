@@ -16,6 +16,8 @@ import { Select } from 'antd';
 import 'antd/dist/reset.css';
 import '../styles/MeterSearch.css';
 import { ReactComponent as Download } from '../assets/download.svg';
+import { ReactComponent as Add } from '../assets/add.svg';
+import { ReactComponent as Remove } from '../assets/remove.svg';
 import { Drawer, Input } from 'antd';
 ChartJS.register(
   CategoryScale,
@@ -37,7 +39,8 @@ export default function MeterSearch() {
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("table");
   const [selectedMeterIds, setSelectedMeterIds] = useState([]);
-  const [graphs, setGraphs] = useState([{ xAxis: "", yAxis: "" }]);
+  const [graphs, setGraphs] = useState([
+  { meterId: "", parameter: "", fromDate: "", toDate: "", fromTime: "", toTime: "" }]);
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
   const [goToPageInput, setGoToPageInput] = useState("");
@@ -48,6 +51,7 @@ export default function MeterSearch() {
   const tableRef = useRef(null);
   const [isMeterDrawerOpen, setIsMeterDrawerOpen] = useState(false);
   const [meterDrawerSearch, setMeterDrawerSearch] = useState("");
+  
 
 
   useEffect(() => {
@@ -281,9 +285,26 @@ export default function MeterSearch() {
     return { datasets };
   };
 
+  function formatDateDDMMYYYY(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  const day = d.getDate().toString().padStart(2, '0');
+  const month = (d.getMonth() + 1).toString().padStart(2, '0');
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+function truncateId(id, maxLength = 4) {
+  if (!id) return "";
+  return id.length > maxLength ? id.slice(0, maxLength) + "..." : id;
+}
+
+
   return (
+    
     <div className="page" style={{ background: "#fff", minHeight: "100vh" }}>
-      <div className="container" style={{ maxWidth: 1000, margin: "32px auto", padding: "0 24px" }}>
+      <div className="container" style={{ width:"100%",margin: "32px 0", padding: "0 24px" }}>
         
 
         {!showTable && (<h1 className="heading" style={{
@@ -534,10 +555,11 @@ export default function MeterSearch() {
             <div className="table-summary" style={{
     display: "flex",
     position: "relative",
-    
+    top: -48,
+    padding: "0px",
     alignItems: "center",
-    gap: 6,
-    marginTop: 12,
+    gap: 18,
+    marginTop: 2,
     marginBottom: 24,
     whiteSpace: "nowrap",
     fontSize: 16,
@@ -562,31 +584,35 @@ export default function MeterSearch() {
   <div>
   <div style={{ color: "#B0B0B0",  marginBottom: 2 }}>Meter IDs</div>
   <div style={{ color: "#27272A", fontWeight: 500, display: "flex", alignItems: "center" }}>
-    {selectedMeterIds.length <= 2 ? (
-      selectedMeterIds.join(", ")
-    ) : (
-      <>
-        {selectedMeterIds.slice(0, 2).join(", ")}
-        <span
-          style={{
-            marginLeft: 8,
-            cursor: "pointer",
-            fontWeight: 700,
-            fontSize: 20,
-            padding: "0 8px",
-            borderRadius: 8,
-            background: "#f5f5fa",
-            display: "inline-flex",
-            alignItems: "center"
-          }}
-          onClick={() => setIsMeterDrawerOpen(true)}
-          title="Show all Meter IDs"
-        >
-          ...
-        </span>
-      </>
-    )}
-  </div>
+  {selectedMeterIds.length === 1 && selectedMeterIds[0]}
+  {selectedMeterIds.length > 1 && (
+    <>
+      {selectedMeterIds[0]}
+      {", "}
+      {truncateId(selectedMeterIds[1])}
+      <button
+        style={{
+          marginLeft: 8,
+          cursor: "pointer",
+          fontWeight: 600,
+          fontSize: 10,
+          padding: "2px 10px",
+          borderRadius: 8,
+          background: "#F0F0F5",
+          border: "none",
+          color: "#1773BE",
+          display: "inline-flex",
+          alignItems: "center"
+        }}
+        onClick={() => setIsMeterDrawerOpen(true)}
+        title="Show all Meter IDs"
+      >
+        show more
+      </button>
+    </>
+  )}
+</div>
+
 </div>
 
   <div>
@@ -628,13 +654,13 @@ export default function MeterSearch() {
         display: "flex",
         alignItems: "center",
         cursor: "pointer",
-        marginLeft: 6,
-        marginRight: 6,
+        marginLeft: 0,
+        marginRight: 0,
         fontFamily: "'GT Walsheim Pro', Arial, sans-serif",
         fontWeight: 600,
         fontSize: 16,
         color: "#1773BE",
-        transition: "background 0.2s, color 0.2s"
+        transition: "background 0.8s, color 0.2s"
         
       }}
       
@@ -771,114 +797,357 @@ export default function MeterSearch() {
             )}
             {/* --- GRAPHICAL VIEW --- */}
             {viewMode === "graph" && (
-              <div style={{ marginTop: 24 }}>
-                {graphs.map((graph, idx) => (
-                  <div key={idx} style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                    <Select
-                      value={graph.xAxis}
-                      onChange={value => {
-                        const newGraphs = [...graphs];
-                        newGraphs[idx].xAxis = value;
-                        setGraphs(newGraphs);
-                      }}
-                      placeholder="Select X-Axis"
-                      style={{ minWidth: 180 }}
-                      options={columns.map(col => ({
-                        value: col,
-                        label: columnDisplayNames[col] || col
-                      }))}
-                      allowClear
-                      showSearch
-                    />
-                    <Select
-                      value={graph.yAxis}
-                      onChange={value => {
-                        const newGraphs = [...graphs];
-                        newGraphs[idx].yAxis = value;
-                        setGraphs(newGraphs);
-                      }}
-                      placeholder="Select Y-Axis"
-                      style={{ minWidth: 180 }}
-                      options={columns.map(col => ({
-                        value: col,
-                        label: columnDisplayNames[col] || col
-                      }))}
-                      allowClear
-                      showSearch
-                    />
-                    {graphs.length > 1 && (
-                      <button
-                        className="button button-danger"
-                        onClick={() => setGraphs(graphs.filter((_, i) => i !== idx))}
-                        style={{ marginLeft: 8 }}
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                ))}
-                <button
-                  className="button"
-                  onClick={() =>
-                    setGraphs(prevGraphs => {
-                      const firstXAxis = prevGraphs.length > 0 ? prevGraphs[0].xAxis : "";
-                      return [...prevGraphs, { xAxis: firstXAxis, yAxis: "" }];
-                    })
-                  }
-                  style={{ marginTop: 8, marginBottom: 24 }}
-                >
-                  Add Another Graph
-                </button>
-                <div style={{ display: "flex", gap: 24, marginTop: 24, flexWrap: "wrap" }}>
-                  {graphs.map((graph, idx) => {
-                    const chartData = getChartData(graph.xAxis, graph.yAxis);
-                    return (
-                      <div key={idx} style={{ flex: 1, minWidth: 400, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(41,103,255,0.04)", padding: 24 }}>
-                        {graph.xAxis && graph.yAxis && chartData ? (
-                          <Line
-                            data={chartData}
-                            options={{
-                              responsive: true,
-                              plugins: {
-                                legend: { position: "top", labels: { color: "#222" } },
-                                title: {
-                                  display: true,
-                                  text: `${columnDisplayNames[graph.yAxis] || graph.yAxis} vs. ${columnDisplayNames[graph.xAxis] || graph.xAxis}`,
-                                  color: "#222",
-                                },
-                                tooltip: { mode: "index", intersect: false },
-                              },
-                              scales: {
-                                x: {
-                                  ticks: { color: "#222" },
-                                  grid: { color: "#ececf1" },
-                                  title: {
-                                    display: true,
-                                    text: columnDisplayNames[graph.xAxis] || graph.xAxis,
-                                    color: "#222",
-                                  },
-                                },
-                                y: {
-                                  ticks: { color: "#222" },
-                                  grid: { color: "#ececf1" },
-                                  title: {
-                                    display: true,
-                                    text: columnDisplayNames[graph.yAxis] || graph.yAxis,
-                                    color: "#222",
-                                  },
-                                },
-                              },
-                            }}
-                          />
-                        ) : (
-                          <p style={{ color: "#bbb" }}>Select axes to display graph</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+  <div style={{ marginTop: 24, position: "relative", top: -48 }}>
+    {graphs.map((graph, idx) => (
+      <div
+        key={idx}
+        style={{
+          background: "#F8FAFC",
+          borderRadius: 10,
+          padding: 16,
+          marginBottom: 16,
+          boxShadow: "0 1px 4px rgba(41,103,255,0.04)",
+          display: "flex",
+          flexWrap: "nowrap", // Prevent wrapping
+          alignItems: "flex-end",
+          gap: 16,
+        }}
+      >
+        {/* Meter ID Dropdown */}
+        <div style={{ minWidth: 140, flex: "1" }}>
+          <label style={{ fontWeight: 500, color: "#27272A", marginBottom: 4, display: "block" }}>
+            Meter ID
+          </label>
+          <Select
+            value={graph.meterId}
+            onChange={value => {
+              const newGraphs = [...graphs];
+              newGraphs[idx].meterId = value;
+              setGraphs(newGraphs);
+            }}
+            placeholder="Select Meter ID"
+            style={{ width: "100%" }}
+            options={meterIds.map(id => ({
+              value: id,
+              label: id
+            }))}
+            allowClear
+            showSearch
+          />
+        </div>
+        {/* Parameter Dropdown */}
+        <div style={{ minWidth: 140, flex: "1" }}>
+          <label style={{ fontWeight: 500, color: "#27272A", marginBottom: 4, display: "block" }}>
+            Parameter
+          </label>
+          <Select
+            value={graph.parameter}
+            onChange={value => {
+              const newGraphs = [...graphs];
+              newGraphs[idx].parameter = value;
+              setGraphs(newGraphs);
+            }}
+            placeholder="Select Parameter"
+            style={{ width: "100%" }}
+            options={columns.map(col => ({
+              value: col,
+              label: columnDisplayNames[col] || col
+            }))}
+            allowClear
+            showSearch
+          />
+        </div>
+        {/* From Date Dropdown */}
+        <div style={{ minWidth: 120 }}>
+          <label style={{ fontWeight: 500, color: "#27272A", marginBottom: 4, display: "block" }}>
+            From Date
+          </label>
+          <Select
+            value={graph.fromDate}
+            onChange={value => {
+              const newGraphs = [...graphs];
+              newGraphs[idx].fromDate = value;
+              setGraphs(newGraphs);
+            }}
+            placeholder="From Date"
+            style={{ width: "100%" }}
+            options={
+              Array.from(new Set(data.map(row => row.date || (row.datetime && row.datetime.split("T")[0]))))
+                .filter(Boolean)
+                .sort()
+                .map(date => ({
+                  value: date,
+                  label: formatDateDDMMYYYY(date)
+                }))
+            }
+            allowClear
+            showSearch
+          />
+        </div>
+        {/* To Date Dropdown */}
+        <div style={{ minWidth: 120 }}>
+          <label style={{ fontWeight: 500, color: "#27272A", marginBottom: 4, display: "block" }}>
+            To Date
+          </label>
+          <Select
+            value={graph.toDate}
+            onChange={value => {
+              const newGraphs = [...graphs];
+              newGraphs[idx].toDate = value;
+              setGraphs(newGraphs);
+            }}
+            placeholder="To Date"
+            style={{ width: "100%" }}
+            options={
+              Array.from(new Set(data.map(row => row.date || (row.datetime && row.datetime.split("T")[0]))))
+                .filter(Boolean)
+                .sort()
+                .map(date => ({
+                  value: date,
+                  label: formatDateDDMMYYYY(date)
+                }))
+            }
+            allowClear
+            showSearch
+          />
+        </div>
+        {/* From Time Dropdown */}
+        <div style={{ minWidth: 100 }}>
+          <label style={{ fontWeight: 500, color: "#27272A", marginBottom: 4, display: "block" }}>
+            From Time
+          </label>
+          <Select
+            value={graph.fromTime}
+            onChange={value => {
+              const newGraphs = [...graphs];
+              newGraphs[idx].fromTime = value;
+              setGraphs(newGraphs);
+            }}
+            placeholder="From Time"
+            style={{ width: "100%" }}
+            options={
+              Array.from(new Set(data.map(row => {
+                const dt = row.datetime || "";
+                return dt ? dt.split("T")[1]?.slice(0,5) : "";
+              })))
+                .filter(Boolean)
+                .sort()
+                .map(time => ({
+                  value: time,
+                  label: time
+                }))
+            }
+            allowClear
+            showSearch
+          />
+        </div>
+        {/* To Time Dropdown */}
+        <div style={{ minWidth: 100 }}>
+          <label style={{ fontWeight: 500, color: "#27272A", marginBottom: 4, display: "block" }}>
+            To Time
+          </label>
+          <Select
+            value={graph.toTime}
+            onChange={value => {
+              const newGraphs = [...graphs];
+              newGraphs[idx].toTime = value;
+              setGraphs(newGraphs);
+            }}
+            placeholder="To Time"
+            style={{ width: "100%" }}
+            options={
+              Array.from(new Set(data.map(row => {
+                const dt = row.datetime || "";
+                return dt ? dt.split("T")[1]?.slice(0,5) : "";
+              })))
+                .filter(Boolean)
+                .sort()
+                .map(time => ({
+                  value: time,
+                  label: time
+                }))
+            }
+            allowClear
+            showSearch
+          />
+        </div>
+        {/* Remove Button */}
+        {/* Remove Button inside each graph */}
+{graphs.length > 1 && (
+  <button
+  onClick={() => setGraphs(graphs.filter((_, i) => i !== idx))}
+  style={{
+    background: "none",
+    border: "none",
+    borderRadius: 0,
+    width: 32,
+    height: 32,
+    padding: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    boxShadow: "none",
+    marginLeft: 8,
+    alignSelf: "flex-end",
+  }}
+  title="Remove Graph"
+>
+  <Remove width={32} height={32} />
+</button>
+)}
+
+      </div>
+    ))}
+    {/* Add Another Graph Button */}
+    <button
+  onClick={() =>
+    setGraphs(prevGraphs => [
+      ...prevGraphs,
+      { meterId: meterIds[0] || "", parameter: columns[0] || "", fromDate: "", toDate: "", fromTime: "", toTime: "" }
+    ])
+  }
+  style={{
+    background: "none",
+    border: "none",
+    borderRadius: 0,
+    width: 36,
+    height: 36,
+    padding: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    boxShadow: "none",
+    marginTop: 8,
+    marginBottom: 24,
+  }}
+  title="Add Graph"
+>
+  <Add width={32} height={32} />
+</button>
+
+    {/* Chart Rendering */}
+    <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
+      {graphs.map((graph, idx) => {
+        // Filter data based on all selections
+        const filtered = data.filter(row => {
+          const meterMatch = !graph.meterId || row.meter_id === graph.meterId;
+          const date = row.date || (row.datetime && row.datetime.split("T")[0]);
+          const time = row.datetime ? row.datetime.split("T")[1]?.slice(0,5) : "";
+          const fromDateOk = !graph.fromDate || date >= graph.fromDate;
+          const toDateOk = !graph.toDate || date <= graph.toDate;
+          const fromTimeOk = !graph.fromTime || time >= graph.fromTime;
+          const toTimeOk = !graph.toTime || time <= graph.toTime;
+          return meterMatch && fromDateOk && toDateOk && fromTimeOk && toTimeOk;
+        });
+        const chartData = {
+  labels: filtered.map(row =>
+    formatDateDDMMYYYY(
+      row.date ||
+      (row.datetime && row.datetime.split("T")[0]) ||
+      row.datetime ||
+      ""
+    )
+  ),
+  datasets: [
+    {
+      label: graph.parameter,
+      data: filtered.map(row => row[graph.parameter]),
+      borderColor: "#1773BE",
+      backgroundColor: "#E9F3FF",
+      fill: false,
+    }
+  ]
+};
+        return (
+          <div key={idx} style={{ flex: 1, minWidth: 400, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(41,103,255,0.04)", padding: 24 }}>
+            {graph.meterId && graph.parameter && chartData.labels.length > 0 ? (
+              <Line
+  data={chartData}
+  options={{
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+        labels: {
+          color: "#222",
+          font: {
+            family: "'GT Walsheim Pro', Arial, sans-serif",
+            size: 16,
+            weight: "bold"
+          }
+        }
+      },
+      title: {
+        display: true,
+        text: `${graph.parameter} for ${graph.meterId}`,
+        color: "#222",
+        font: {
+          family: "'GT Walsheim Pro', Arial, sans-serif",
+          size: 18,
+          weight: "bold"
+        }
+      },
+      tooltip: { mode: "index", intersect: false }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: "#222",
+          font: {
+            family: "'GT Walsheim Pro', Arial, sans-serif",
+            size: 14
+          }
+        },
+        grid: { color: "#ececf1" },
+        title: {
+          display: true,
+          text: "Date",
+          color: "#222",
+          font: {
+            family: "'GT Walsheim Pro', Arial, sans-serif",
+            size: 16,
+            weight: "bold"
+          }
+        }
+      },
+      y: {
+        ticks: {
+          color: "#222",
+          font: {
+            family: "'GT Walsheim Pro', Arial, sans-serif",
+            size: 14
+          }
+        },
+        grid: { color: "#ececf1" },
+        title: {
+          display: true,
+          text: graph.parameter,
+          color: "#222",
+          font: {
+            family: "'GT Walsheim Pro', Arial, sans-serif",
+            size: 16,
+            weight: "bold"
+          }
+        }
+      }
+    }
+  }}
+/>
+
+            ) : (
+              <p style={{ color: "#bbb" }}>Select all fields to display graph</p>
             )}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
+
+
+
           </>
         )}
         <Drawer
