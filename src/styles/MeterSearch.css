@@ -574,9 +574,8 @@ input:checked + .slider:before {
   width: 284px;
   height: 48px;
   padding: 4px;
-  margin-left: auto;
   position: relative;
-  white-space: nowrap;
+  font-size: 12px;
 }
 
 .toggle-segmented-control button {
@@ -585,22 +584,32 @@ input:checked + .slider:before {
   outline: none;
   background: transparent;
   color: #27272A;
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 600;
+  
   height: 40px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: color 0.2s;
+  position: relative;
+  z-index: 1;
 }
 
 .toggle-segmented-control button.active {
+  color: #1773BE;
+  font-weight: 700;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 4px;
+  width: calc(50% - 8px);
+  height: 40px;
+  border-radius: 8px;
   background: #E9F3FF;
-  color: #1773BE;
+  transition: left 0.35s cubic-bezier(.4,0,.2,1);
+  z-index: 0;
 }
-.toggle-segmented-control button:hover {
-  background: #F0F4FF;
-  color: #1773BE;
-}
+
 .graph-control-card {
   background: #F8FAFC;
   border-radius: 10px;
@@ -642,5 +651,14 @@ input:checked + .slider:before {
   margin-left: 8px;
   cursor: pointer;
 }
+
+/* Prevent overflow from ant-layout */
+
+ 
+/* Prevent overflow on body and html */
+
+ 
+/* Optionally, prevent it on main layout container */
+
 
 
