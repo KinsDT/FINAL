@@ -85,7 +85,8 @@ export default function Sidebar() {
           background: isActive('/Secondpage') ? '#ECF4FA' : 'transparent',
           color: isActive('/Secondpage') ? ACTIVE_COLOR : '#000',
           fontWeight: 400,
-          fontFamily: 'GT Walsheim Pro'
+          fontFamily: 'GT Walsheim Pro',
+          
         }}
         onClick={() => navigate('/Secondpage')}
       >

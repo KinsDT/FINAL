@@ -493,7 +493,7 @@ function truncateId(id, maxLength = 4) {
                 marginBottom: 32,
                 position: "relative",
                 top: 120,
-                left: 800 ,
+                left: 850 ,
                 boxShadow: "0 2px 8px rgba(41,103,255,0.07)"
               }}
             >
@@ -624,20 +624,86 @@ function truncateId(id, maxLength = 4) {
 </div>
 
   </div>
-              <div className="toggle-segmented-control">
+              <div className="toggle-segmented-control" style={{ position: "relative", width: 324, height: 48, display: "flex",
+    alignItems: "center",
+    borderRadius: 10,
+    border: "1.5px solid #E7E7EC",
+    background: "#fff",
+    boxShadow: "0 2px 8px rgba(41,103,255,0.07)",
+    padding: 4,
+    overflow: "hidden" }}>
   <button
     className={viewMode === "table" ? "active" : ""}
     onClick={() => setViewMode("table")}
+    style={{
+      flex: "1 1 0",
+      minWidth: 0,
+      zIndex: 1,
+      whiteSpace: "nowrap",
+      background: "transparent",
+      border: "none",
+      outline: "none",
+      fontSize: 12,
+      fontWeight: 600,
+      color: viewMode === "table" ? "#1773BE" : "#27272A",
+      borderRadius: 8,
+      height: 40,
+      padding: "0 0", // Remove default padding
+      margin: 0,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      transition: "color 0.2s"  
+    }}
+    type="button"
   >
     Table View
   </button>
   <button
     className={viewMode === "graph" ? "active" : ""}
     onClick={() => setViewMode("graph")}
+    style={{
+      flex: "1 1 0",
+      minWidth: 0,
+      zIndex: 1,
+      whiteSpace: "nowrap",
+      background: "transparent",
+      border: "none",
+      outline: "none",
+      fontSize: 12,
+      fontWeight: 600,
+      color: viewMode === "graph" ? "#1773BE" : "#27272A",
+      borderRadius: 8,
+      height: 40,
+      padding: "0 0",
+      margin: 0,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      transition: "color 0.2s" 
+    }}
+    type="button"
   >
     Graphical View
   </button>
+  <span
+    className="toggle-slider"
+    style={{
+      position: "absolute",
+      top: 4,
+      left: viewMode === "table" ? 4 : "calc(50% + 4px)",
+      width: "calc(50% - 8px)",
+      height: 40,
+      borderRadius: 8,
+      background: "#E9F3FF",
+      transition: "left 0.35s cubic-bezier(.4,0,.2,1)",
+      zIndex: 0,
+    }}
+  />
 </div>
+
 
   <div>
   <DownloadTableExcel
