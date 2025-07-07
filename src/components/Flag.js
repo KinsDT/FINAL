@@ -281,7 +281,7 @@ const Flag = () => {
           fontWeight: 500,
           lineHeight: "normal"
         }}>
-          Satellite Map of Meter Locations
+          Loading and Single Phasing View
         </h1>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

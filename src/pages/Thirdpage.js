@@ -11,7 +11,7 @@ export default function Thirdpage() {
       <Sider width={200}>
         <Sidebar />
       </Sider>
-      <Layout style={{ padding: '0 0px', width: '100%' }}>
+      <Layout style={{ padding: '0 0px' }}>
         <Content style={{ marginTop: 0 }}>
           <MeterSearch />
         </Content>
