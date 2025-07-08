@@ -707,37 +707,60 @@ function truncateId(id, maxLength = 4) {
 
   <div>
   <DownloadTableExcel
-    filename="meter-data.xlsx"
-    sheet="Sheet1"
-    currentTableRef={tableRef.current}
-  >
-    <button
-      style={{
-        background: "#fff",
-        border: "none",
-        borderRadius: "50%",
-        padding: 0,
-        display: "flex",
-        alignItems: "center",
-        cursor: "pointer",
-        marginLeft: 0,
-        marginRight: 0,
-        fontFamily: "'GT Walsheim Pro', Arial, sans-serif",
-        fontWeight: 600,
-        fontSize: 16,
-        color: "#1773BE",
-        transition: "background 0.8s, color 0.2s"
-        
-      }}
-      
-      aria-label="Download table as Excel"
-    >
-      <span style={{ display: "inline-flex", marginRight: 8 }}>
+  filename="meter-data"
+  sheet="Sheet1"
+  currentTableRef={tableRef.current}
+>
+  <button
+  className="download-excel-btn"
+  style={{
+    background: "#fff",
+    border: "none",
+    borderRadius: "50%",
+    padding: 0,
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+    marginLeft: 0,
+    marginRight: 0,
+    fontFamily: "'GT Walsheim Pro', Arial, sans-serif",
+    fontWeight: 600,
+    fontSize: 16,
+    color: "#1773BE",
+    transition: "background 0.2s, color 0.2s"
+  }}
+  aria-label="Download table as Excel"
+>
+  <span style={{ display: "inline-flex", marginRight: 8 }}>
     <Download width={40} height={40} />
   </span>
-  
 </button>
-  </DownloadTableExcel>
+
+</DownloadTableExcel>
+
+{/* Hidden table for export */}
+<table ref={tableRef} style={{ display: "none" }}>
+  <thead>
+    <tr>
+      {columns.map(col => (
+        <th key={col}>{columnDisplayNames[col] || col}</th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    {data.map((row, idx) => (
+      <tr key={idx}>
+        {columns.map(col => (
+          <td key={col}>
+            {row[col] !== undefined && row[col] !== null ? row[col].toString() : ""}
+          </td>
+        ))}
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+
 </div>
 
             </div>
@@ -745,7 +768,7 @@ function truncateId(id, maxLength = 4) {
             {viewMode === "table" && (
               <div className="tableArea">
                 <div className="tableWrapper" style={{width: "100%", boxSizing: "border-box"}}>
-                  <table ref={tableRef}className="table" style={{ width: "100%" }}>
+                  <table className="table" style={{ width: "100%" }}>
                     <thead>
                       <tr>
                         {columns.map((col) => (
@@ -846,17 +869,26 @@ function truncateId(id, maxLength = 4) {
                       {startRecord} - {endRecord} of {totalRecords}
                     </span>
                     <span className="pagination-goto-label">
-                      Go to page
-                      <input
-                        type="number"
-                        min="1"
-                        max={totalPages}
-                        value={goToPageInput}
-                        onChange={e => setGoToPageInput(e.target.value)}
-                        className="pagination-goto-input"
-                      />
-                      / {totalPages}
-                    </span>
+  Go to page
+  <input
+    type="number"
+    min="1"
+    max={totalPages}
+    value={goToPageInput}
+    onChange={e => setGoToPageInput(e.target.value)}
+    onKeyDown={e => {
+      if (e.key === 'Enter') {
+        const page = Number(goToPageInput);
+        if (page >= 1 && page <= totalPages) {
+          setCurrentPage(page);
+        }
+      }
+    }}
+    className="pagination-goto-input"
+    style={{ width: 50, margin: '0 8px' }}
+  />
+  / {totalPages}
+</span> 
                   </div>
                 </div>
               </div>
