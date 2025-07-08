@@ -270,7 +270,7 @@ input:checked + .slider:before {
 
 .tableArea {
   position: relative;
-  padding-bottom: 60px;
+  padding-bottom: 90px;
   width:100%; /* Height of the pagination bar */
 }
 
@@ -297,7 +297,7 @@ input:checked + .slider:before {
 .paginationControls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px\;
 }
 
 /* Pagination button base */
@@ -651,6 +651,8 @@ input:checked + .slider:before {
   margin-left: 8px;
   cursor: pointer;
 }
+
+
 
 /* Prevent overflow from ant-layout */
 
