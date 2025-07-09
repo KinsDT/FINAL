@@ -119,16 +119,21 @@ export default function MeterSearch() {
     v3: "v3",
     vuf: "vuf",
     datetime: "Date Time",
-    pfavg3ph: "Power Factor Avg 3 Phase",
-    pfph_a:"Power Factor Phase A",
-    pfph_b: "Power Factor Phase B",
-    pfph_c: "Power Factor Phase C",
-    v3ph_avg_percent: "Voltage 3 Phase Avg % Variation",
-    va_avg_percent: "Voltage Phase A % Variation",
-    vb_avg_percent: "Voltage Phase B % Variation",
-    vc_avg_percent: "Voltage Phase C % Variation",
-    vu_percent: "Voltage Unbalance %",
-    iu_percent: "Current Unbalance %",
+    pfavg3ph: "PF Avg 3 Phase",
+    pfph_a:"PF - R Phase",
+    pfph_b: "PF - Y Phase",
+    pfph_c: "PF - B Phase",
+    v3ph_avg_percent: "Avg Voltage Variation - 3 Phase (%)",
+    va_avg_percent: "Voltage Variation - R Phase (%)",
+    vb_avg_percent: "Voltage Variation - Y Phase (%)",
+    vc_avg_percent: "Voltage Variation - B Phase (%)",
+    vu_percent: "Voltage Unbalance (%)",
+    iu_percent: "Current Unbalance (%)",
+    v3ph_max_percent: "Max Voltage Variation - 3 Phase (%)",
+    va_max_percent: "Max Voltage Variation - R Phase (%)",
+    vb_max_percent: "Max Voltage Variation - Y Phase (%)",
+    vc_max_percent: "Max Voltage Variation - B Phase (%)",
+
 
   };
 
@@ -213,20 +218,45 @@ export default function MeterSearch() {
   }, [data]);
 
   const getColumnsByNonNullCount = (dataArray) => {
-    if (!dataArray.length) return [];
-    const allCols = Object.keys(dataArray[0]);
-    const prioritized = ["meter_id","date", "datetime", "block_name","block","pfavg3ph","pfph_a","pfph_b","pfph_c", "voltage_pha", "voltage_phb", "voltage_phc","v3ph_avg_percent","va_avg_percent","vb_avg_percent","vc_avg_percent","vu_percent","iu_percent", "v1", "v2", "v3", "vuf", ];
-    const otherCols = allCols.filter((c) => !prioritized.includes(c));
-    const counts = otherCols.map((col) => {
-      const nonNullCount = dataArray.reduce(
-        (acc, row) => (row[col] !== null && row[col] !== undefined ? acc + 1 : acc),
-        0
-      );
-      return { col, nonNullCount };
-    });
-    counts.sort((a, b) => b.nonNullCount - a.nonNullCount);
-    return [...prioritized.filter(col => allCols.includes(col)), ...counts.map((c) => c.col)];
-  };
+  if (!dataArray.length) return [];
+  const allCols = Object.keys(dataArray[0]);
+  const hasDatetime = allCols.includes("datetime");
+
+  // Build prioritized list based on presence of "datetime"
+  const prioritized = [
+    "meter_id",
+    ...(hasDatetime ? ["datetime"] : ["date"]),
+    ...(hasDatetime ? [] : ["block"]),
+    "block_name",
+    "pfavg3ph", "pfph_a", "pfph_b", "pfph_c",
+    "voltage_pha", "voltage_phb", "voltage_phc",
+    "v3ph_avg_percent", "va_avg_percent", "vb_avg_percent", "vc_avg_percent",
+    "vu_percent", "iu_percent",
+    "v1", "v2", "v3", "vuf"
+  ];
+
+  // Remove "date" and "block" from prioritized if "datetime" exists
+  const filteredPrioritized = prioritized.filter(col => allCols.includes(col));
+
+  // Find other columns
+  const otherCols = allCols.filter((c) => !filteredPrioritized.includes(c));
+
+  // Count non-null values for other columns
+  const counts = otherCols.map((col) => {
+    const nonNullCount = dataArray.reduce(
+      (acc, row) => (row[col] !== null && row[col] !== undefined ? acc + 1 : acc),
+      0
+    );
+    return { col, nonNullCount };
+  });
+
+  // Sort by non-null count descending
+  counts.sort((a, b) => b.nonNullCount - a.nonNullCount);
+
+  // Return prioritized + sorted other columns
+  return [...filteredPrioritized, ...counts.map((c) => c.col)];
+};
+
 
   const columns = getColumnsByNonNullCount(data);
   const totalRecords = data.length;
@@ -474,7 +504,7 @@ function truncateId(id, maxLength = 4) {
                     onChange={() => setViewMode("table")}
                     style={{ marginRight: 8 }}
                   />
-                  Table View
+                  Tabular
                 </label>
                 <label style={{ display: "flex", alignItems: "center", fontSize: 16, color: "#27272A" }}>
                   <input
@@ -484,7 +514,7 @@ function truncateId(id, maxLength = 4) {
                     onChange={() => setViewMode("graph")}
                     style={{ marginRight: 8 }}
                   />
-                  Graphical View
+                  Graphical
                 </label>
               </div>
             </div>
@@ -653,7 +683,7 @@ function truncateId(id, maxLength = 4) {
       background: "transparent",
       border: "none",
       outline: "none",
-      fontSize: 12,
+      fontSize: 16,
       fontWeight: 600,
       color: viewMode === "table" ? "#1773BE" : "#27272A",
       borderRadius: 8,
@@ -668,7 +698,7 @@ function truncateId(id, maxLength = 4) {
     }}
     type="button"
   >
-    Table View
+    Tabular
   </button>
   <button
     className={viewMode === "graph" ? "active" : ""}
@@ -681,7 +711,7 @@ function truncateId(id, maxLength = 4) {
       background: "transparent",
       border: "none",
       outline: "none",
-      fontSize: 12,
+      fontSize: 16,
       fontWeight: 600,
       color: viewMode === "graph" ? "#1773BE" : "#27272A",
       borderRadius: 8,
@@ -696,7 +726,7 @@ function truncateId(id, maxLength = 4) {
     }}
     type="button"
   >
-    Graphical View
+    Graphical
   </button>
   <span
     className="toggle-slider"
@@ -804,9 +834,10 @@ function truncateId(id, maxLength = 4) {
                                       return `${day} ${month} ${year}`;
                                     })()
                                   : (col.toLowerCase() === "time stamp" || col.toLowerCase() === "datetime") && val
-                                  ? new Date(val).toLocaleTimeString("en-GB", { hour12: false }) + ", " +
-                                    new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-                                  : val === null || val === undefined
+                                  ?  
+                                    new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) + ", " +
+                                    new Date(val).toLocaleTimeString("en-GB", { hour12: false })
+                                    : val === null || val === undefined
                                   ? "-"
                                   : val.toString()}
                               </td>
@@ -1139,6 +1170,8 @@ function truncateId(id, maxLength = 4) {
     <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
       {graphs.map((graph, idx) => {
         // Filter data based on all selections
+        const yLabel = columnDisplayNames[graph.parameter] || graph.parameter;
+          const chartTitle = `${yLabel} for ${graph.meterId}`;
         const filtered = data.filter(row => {
           const meterMatch = !graph.meterId || row.meter_id === graph.meterId;
           const date = row.date || (row.datetime && row.datetime.split("T")[0]);
@@ -1147,6 +1180,7 @@ function truncateId(id, maxLength = 4) {
           const toDateOk = !graph.toDate || date <= graph.toDate;
           const fromTimeOk = !graph.fromTime || time >= graph.fromTime;
           const toTimeOk = !graph.toTime || time <= graph.toTime;
+          
           return meterMatch && fromDateOk && toDateOk && fromTimeOk && toTimeOk;
         });
         const chartData = {
@@ -1189,7 +1223,7 @@ function truncateId(id, maxLength = 4) {
       },
       title: {
         display: true,
-        text: `${graph.parameter} for ${graph.meterId}`,
+        text: chartTitle,
         color: "#222",
         font: {
           family: "'GT Walsheim Pro', Arial, sans-serif",
@@ -1231,7 +1265,7 @@ function truncateId(id, maxLength = 4) {
         grid: { color: "#ececf1" },
         title: {
           display: true,
-          text: graph.parameter,
+          text: yLabel,
           color: "#222",
           font: {
             family: "'GT Walsheim Pro', Arial, sans-serif",
