@@ -120,6 +120,16 @@ export default function MeterSearch() {
     vuf: "vuf",
     datetime: "Date Time",
     pfavg3ph: "Power Factor Avg 3 Phase",
+    pfph_a:"Power Factor Phase A",
+    pfph_b: "Power Factor Phase B",
+    pfph_c: "Power Factor Phase C",
+    v3ph_avg_percent: "Voltage 3 Phase Avg % Variation",
+    va_avg_percent: "Voltage Phase A % Variation",
+    vb_avg_percent: "Voltage Phase B % Variation",
+    vc_avg_percent: "Voltage Phase C % Variation",
+    vu_percent: "Voltage Unbalance %",
+    iu_percent: "Current Unbalance %",
+
   };
 
   const fetchData = async () => {
@@ -205,7 +215,7 @@ export default function MeterSearch() {
   const getColumnsByNonNullCount = (dataArray) => {
     if (!dataArray.length) return [];
     const allCols = Object.keys(dataArray[0]);
-    const prioritized = ["date", "meter_id", "block_name", "voltage_pha", "voltage_phb", "voltage_phc", "v1", "v2", "v3", "vuf", "datetime"];
+    const prioritized = ["meter_id","date", "datetime", "block_name","block","pfavg3ph","pfph_a","pfph_b","pfph_c", "voltage_pha", "voltage_phb", "voltage_phc","v3ph_avg_percent","va_avg_percent","vb_avg_percent","vc_avg_percent","vu_percent","iu_percent", "v1", "v2", "v3", "vuf", ];
     const otherCols = allCols.filter((c) => !prioritized.includes(c));
     const counts = otherCols.map((col) => {
       const nonNullCount = dataArray.reduce(
@@ -316,7 +326,7 @@ function truncateId(id, maxLength = 4) {
           position: "relative",
           left:0,
         }}>
-          Meter-wise Dashboard
+          Meter-wise Data Viewer
         </h1>
         )}
 
@@ -546,7 +556,7 @@ function truncateId(id, maxLength = 4) {
           verticalAlign: "middle",
         }}
       >
-        Meter-wise Dashboard
+        Meter-wise Data Viewer
       </span>
     </div>
 
