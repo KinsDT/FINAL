@@ -60,6 +60,7 @@ const ZoomWatcher = ({ onZoomChange }) => {
   return null;
 };
 
+const ZOOM_THRESHOLD = 11;
 const SimpleMap = ({ markers = [], parameter }) => {
   const center = markers.length > 0 ? [markers[0].lat, markers[0].long] : [20, 78];
   const [zoomLevel, setZoomLevel] = useState(6);
@@ -68,8 +69,8 @@ const SimpleMap = ({ markers = [], parameter }) => {
   const shouldBlink = (m) => m.flag >= 3 || m.shouldBlinkPhasing || m.shouldBlinkLoading;
 
   // 👇 Only show flagged if zoomed out
-  const visibleMarkers = zoomLevel < 1
-    ? markers.filter(m => m.flag >= 3 || m.single_phasing === 1)
+  const visibleMarkers = zoomLevel < ZOOM_THRESHOLD
+    ? markers.filter(shouldBlink)
     : markers;
 
   return (

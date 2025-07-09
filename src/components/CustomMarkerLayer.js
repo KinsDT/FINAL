@@ -67,8 +67,9 @@ export function CustomMarkerLayer({
                   <div><strong>{selectedParam}:</strong></div>
                   <div><strong>MAX:</strong> {meterParamData[meterId]?.max ?? 'N/A'}</div>
                   <div><strong>MIN:</strong> {meterParamData[meterId]?.min ?? 'N/A'}</div>
-                  <div><strong>AVG:</strong> {meterParamData[meterId]?.avg ?? 'N/A'}</div>
-                  <div><strong>STDDEV:</strong> {meterParamData[meterId]?.stddev ?? 'N/A'}</div>
+                  <div><strong>AVG:</strong> {meterParamData[meterId]?.avg != null ? Number(meterParamData[meterId].avg).toFixed(2) : 'N/A'}</div>
+                  <div><strong>STDDEV:</strong> {meterParamData[meterId]?.stddev != null ? Number(meterParamData[meterId].stddev).toFixed(2) : 'N/A'}</div>
+
                 </>
               ) : (
                 'Select a parameter'

@@ -389,7 +389,7 @@ export default function SubdivisionSelector() {
                   </div>
                 </div>
               </Card>
-              <Spin spinning={loading}>
+              <Spin spinning={loading} tip="Loading Data...">
                 {qosData && (
                     <QualityOfSupplyAggregation data={qosData} loading={loading}/>
                 )}
