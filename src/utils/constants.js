@@ -10,8 +10,8 @@ L.Icon.Default.mergeOptions({
 });
 
 export const paramToColumnMap = {
-  'Voltage Unbalance': 'vu_percent',
-  'Current Unbalance': 'iu_percent',
+  'Voltage Unbalance (%)': 'vu_percent',
+  'Current Unbalance (%)': 'iu_percent',
   'Average Power Factor of 3 Phases': 'pfavg3ph',
 
   'SAIFI (Consumers)': 'saifi_cons',

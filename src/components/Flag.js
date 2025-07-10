@@ -15,6 +15,7 @@ const Flag = () => {
   const [meterMarkers, setMeterMarkers] = useState([]);
   const [loadingData, setLoadingData] = useState([]);
   const [singlePhasingData, setSinglePhasingData] = useState([]);
+  const [centerTrigger, setCenterTrigger] = useState(0);
 
   useEffect(() => {
     const fetchAreas = async () => {
@@ -38,6 +39,7 @@ const Flag = () => {
       const res = await fetch(`http://localhost:5000/api/meter-data/meters-by-area?area=${selectedArea}`);
       const data = await res.json();
       setMeterMarkers(data);
+      setCenterTrigger(prev => prev + 1);
     } catch (err) {
       console.error('Error fetching meter data:', err);
     }
@@ -180,7 +182,7 @@ const Flag = () => {
         </div>
       </div>
 
-      <SimpleMap markers={enrichedMarkers} parameter={parameter} />
+      <SimpleMap markers={enrichedMarkers} parameter={parameter} centerTrigger={centerTrigger} />
     </Content>
   );
 };
