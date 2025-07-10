@@ -122,7 +122,15 @@ export default function SubdivisionSelector() {
 
   fetchData();
 }, [showDashboard, meterIdsCSV]);
-
+    const styles = {
+  fontFamily: 'GT Walsheim Pro',
+  fontWeight: 500,
+  fontSize: 18,
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '24px 40px',
+  justifyContent: 'flex-start',
+};
   return (
     <div style={{ padding: 24,backgroundColor: '#FFFFFF' }}>
       
@@ -252,143 +260,142 @@ export default function SubdivisionSelector() {
               </Card>
 
               
-              <Card title="Reliability Indices" style={{ marginBottom: 24,borderColor:'#DDDDE3',borderRadius:16}}>
-                <div
-                  style={{
-                    fontFamily: 'GT Walsheim Pro',
-                    fontWeight: 500,
-                    fontSize: 18,
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '24px 40px',
-                    justifyContent: 'flex-start',
-                  }}
-                >
-                  <div className="stat-group">
-                    <Tooltip title="System Average Interruption Frequency Index">
-                      <div className="label">SAIFI (Consumers)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.saifi_cons_avg || 0).toFixed(3)}</div>
+              <Card title="Reliability Indices" style={{ marginBottom: 24, borderColor: '#DDDDE3', borderRadius: 16 }}>
+  
+                {/* Consumers */}
+                <Card type="inner" title="Consumer Specific" style={{ marginBottom: 16 }}>
+                  <div style={styles}>
+                    <div className="stat-group">
+                      <Tooltip title="System Average Interruption Frequency Index">
+                        <div className="label">SAIFI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.saifi_cons_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="System Average Interruption Duration Index">
+                        <div className="label">SAIDI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.saidi_cons_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Customer Average Interruption Frequency Index">
+                        <div className="label">CAIFI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.caifi_cons_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Customer Average Interruption Duration Index">
+                        <div className="label">CAIDI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.caidi_cons_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Consumer Interruption Impact Index">
+                        <div className="label">CIII</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.ciii_cons_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Average Service Availability Index">
+                        <div className="label">ASAI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.asai_cons_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Momentary Average Interruption Frequency Index">
+                        <div className="label">MAIFI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.maifi_cons_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Momentary Average Interruption Duration Index">
+                        <div className="label">MAIDI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.maidi_cons_avg || 0).toFixed(3)}</div>
+                    </div>
                   </div>
-                  <div className = "stat-group">
-                    <Tooltip title="System Average Interruption Frequency Index">
-                      <div className="label">SAIFI (Load)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.saifi_load_avg || 0).toFixed(3)}</div>
-                  </div>
+                </Card>
 
-                  <div className="stat-group">
-                    <Tooltip title="Energy Not Supplied">
-                      <div className="label">ENS</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.ens_avg || 0).toFixed(3)}</div>
+                {/* Load */}
+                <Card type="inner" title="Load Specific" style={{ marginBottom: 16 }}>
+                  <div style={styles}>
+                    <div className="stat-group">
+                      <Tooltip title="System Average Interruption Frequency Index">
+                        <div className="label">SAIFI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.saifi_load_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="System Average Interruption Duration Index">
+                        <div className="label">SAIDI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.saidi_load_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Customer Average Interruption Frequency Index (Load)">
+                        <div className="label">CAIFI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.caifi_load_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Customer Average Interruption Duration Index (Load)">
+                        <div className="label">CAIDI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.caidi_load_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Consumer Interruption Impact Index (Load)">
+                        <div className="label">CIII</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.ciii_load_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Average Service Availability Index (Load)">
+                        <div className="label">ASAI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.asai_load_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Momentary Average Interruption Frequency Index (Load)">
+                        <div className="label">MAIFI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.maifi_load_avg || 0).toFixed(3)}</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Momentary Average Interruption Duration Index (Load)">
+                        <div className="label">MAIDI</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.maidi_load_avg || 0).toFixed(3)}</div>
+                    </div>
                   </div>
-                  <div className = "stat-group">
-                    <Tooltip title="Average Energy Not Supplied">
-                      <div className="label">AENS</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.aens_avg || 0).toFixed(3)}</div>
-                  </div>
+                </Card>
 
-                  <div className="stat-group">
-                    <Tooltip title="System Average Interruption Duration Index">
-                      <div className="label">SAIDI (Consumers)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.saidi_cons_avg || 0).toFixed(3)}</div>
+                {/* Others */}
+                <Card type="inner" title="System Specific">
+                  <div style={styles}>
+                    <div className="stat-group">
+                      <Tooltip title="Energy Not Supplied">
+                        <div className="label">ENS</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.ens_avg || 0).toFixed(3)} Kwh</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Average Energy Not Supplied">
+                        <div className="label">AENS</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.aens_avg || 0).toFixed(3)} Kwh</div>
+                    </div>
+                    <div className="stat-group">
+                      <Tooltip title="Overall Reliability of System">
+                        <div className="label">ORS</div>
+                      </Tooltip>
+                      <div className="value">{(pq_avg.ors_avg || 0).toFixed(3)}</div>
+                    </div>
                   </div>
-                  <div className = "stat-group">
-                    <Tooltip title="System Average Interruption Duration Index">
-                      <div className="label">SAIDI (Load)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.saidi_load_avg || 0).toFixed(3)}</div>
-                  </div>
-
-                  <div className="stat-group">
-                    <Tooltip title="Customer Average Interruption Frequency Index">
-                      <div className="label">CAIFI (Consumers)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.caifi_cons_avg || 0).toFixed(3)}</div>
-                  </div>
-                  <div className = "stat-group">
-                    <Tooltip title="Customer Average Interruption Frequency Index (Load)">
-                      <div className="label">CAIFI (Load)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.caifi_load_avg || 0).toFixed(3)}</div>
-                  </div>
-
-                  <div className="stat-group">
-                    <Tooltip title="Overall Reliability of System">
-                      <div className="label">ORS</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.ors_avg || 0).toFixed(3)}</div>
-                  </div>
-
-                  <div className="stat-group">
-                    <Tooltip title="Customer Average Interruption Duration Index">
-                      <div className="label">CAIDI (Consumers)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.caidi_cons_avg || 0).toFixed(3)}</div>
-                  </div>
-                  <div className = "stat-group">
-                    <Tooltip title="Customer Average Interruption Duration Index (Load)">
-                      <div className="label">CAIDI (Load)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.caidi_load_avg || 0).toFixed(3)}</div>
-                  </div>
-
-                  <div className="stat-group">
-                    <Tooltip title="Consumer Interruption Impact Index">
-                      <div className="label">CIII (Consumers)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.ciii_cons_avg || 0).toFixed(3)}</div>
-                  </div>
-                  <div className = "stat-group">
-                    <Tooltip title="Consumer Interruption Impact Index (Load)">
-                      <div className="label">CIII (Load)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.ciii_load_avg || 0).toFixed(3)}</div>
-                  </div>
-
-                  <div className="stat-group">
-                    <Tooltip title="Average Service Availability Index">
-                      <div className="label">ASAI (Consumers)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.asai_cons_avg || 0).toFixed(3)}</div>
-                  </div>
-                  <div className = "stat-group">
-                    <Tooltip title="Average Service Availability Index (Load)">
-                      <div className="label">ASAI (Load)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.asai_load_avg || 0).toFixed(3)}</div>
-                  </div>
-
-                  <div className="stat-group">
-                    <Tooltip title="Momentary Average Interruption Frequency Index">
-                      <div className="label">MAIFI (Consumers)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.maifi_cons_avg || 0).toFixed(3)}</div>
-                  </div>
-                  <div className = "stat-group">
-                    <Tooltip title="Momentary Average Interruption Frequency Index (Load)">
-                      <div className="label">MAIFI (Load)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.maifi_load_avg || 0).toFixed(3)}</div>
-                  </div>
-
-                  <div className="stat-group">
-                    <Tooltip title="Momentary Average Interruption Duration Index">
-                      <div className="label">MAIDI (Consumers)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.maidi_cons_avg || 0).toFixed(3)}</div>
-                  </div>
-                  <div className = "stat-group">
-                    <Tooltip title="Momentary Average Interruption Duration Index (Load)">
-                      <div className="label">MAIDI (Load)</div>
-                    </Tooltip>
-                    <div className="value">{(pq_avg.maidi_load_avg || 0).toFixed(3)}</div>
-                  </div>
-                </div>
+                </Card>
               </Card>
+
+              
               <Spin spinning={loading} tip="Loading Data...">
                 {qosData && (
                     <QualityOfSupplyAggregation data={qosData} loading={loading}/>
