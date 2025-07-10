@@ -357,7 +357,7 @@ function truncateId(id, maxLength = 8) {
           position: "relative",
           left:0,
         }}>
-          Meter-wise Data Viewer
+          DT Data Explorer
         </h1>
         )}
 
@@ -369,7 +369,7 @@ function truncateId(id, maxLength = 8) {
             {/* ... */}
             <div style={{ marginBottom: 32 }}>
               <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A", width: 360 }}>
-                Parameter Name
+                Monitoring Parameter
               </label>
               <Select
                 className="parameter-select"
@@ -396,14 +396,14 @@ function truncateId(id, maxLength = 8) {
             </div>
             <div style={{ marginBottom: 32 }}>
               <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
-                Meter IDs
+                Meters / Transformers
               </label>
               <div style={{display:'flex',gap: 0 }}>
                 <Select
                   className="subdivision-select"
                   value={selectedArea || undefined}
                   onChange={value => setSelectedArea(value)}
-                  placeholder="Select Sub-division"
+                  placeholder="Select Sub-division / Region"
                   style={{
                     height: "36px",
                     lineHeight: "36px",
@@ -431,7 +431,7 @@ function truncateId(id, maxLength = 8) {
                   mode="multiple"
                   allowClear
                   showSearch
-                  placeholder="Select Meter(s)"
+                  placeholder="Select Meter(s) / Transformer(s)"
                   value={selectedMeterIds}
                   onChange={setSelectedMeterIds}
                   style={{
@@ -587,7 +587,7 @@ function truncateId(id, maxLength = 8) {
           verticalAlign: "middle",
         }}
       >
-        Meter-wise Data Viewer
+        DT Data Explorer
       </span>
     </div>
 
