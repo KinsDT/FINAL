@@ -147,7 +147,6 @@ export default function MeterSearch() {
     percentage_load: "Percentage Load (%)",
     ct_vt_ratio: "CT/VT Ratio",
     final_load: "Final Load (kVA)",
-
     area: "Area",
     saifi_cons: "SAIFI (Consumer)",
     saidi_cons: "SAIDI (Consumer)",
@@ -876,7 +875,9 @@ function truncateId(id, maxLength = 8) {
     col === "meter_id"
       ? "sticky-meter th"
       : col === "datetime" || col === "date"
-      ? "sticky-datetime th sticky-shadow"
+      ? "sticky-datetime th"
+      : col === "block" || col === "block_name"
+      ? "sticky-block th"
       : "th"
   }
 >
@@ -1045,7 +1046,7 @@ function truncateId(id, maxLength = 8) {
             }}
             placeholder="Select Meter ID"
             style={{ width: "100%" }}
-            options={meterIds.map(id => ({
+            options={selectedMeterIds.map(id => ({
               value: id,
               label: id
             }))}
