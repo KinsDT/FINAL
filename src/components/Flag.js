@@ -10,7 +10,7 @@ const Flag = () => {
   const [date, setDate] = useState(null);
   const [block, setBlock] = useState(1);
   const [area, setArea] = useState('');
-  const [parameter, setParameter] = useState('Loading');
+  const [parameter, setParameter] = useState('');
   const [areas, setAreas] = useState([]);
   const [meterMarkers, setMeterMarkers] = useState([]);
   const [loadingData, setLoadingData] = useState([]);
@@ -140,7 +140,7 @@ const Flag = () => {
           fontWeight: 500,
           lineHeight: "normal"
         }}>
-          Loading and Single Phasing View
+          DT Operational Exceptions
         </h1>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -148,17 +148,19 @@ const Flag = () => {
             format="DD/MM/YYYY"
             onChange={(d) => setDate(d)}
             style={{ width: 140,fontFamily: 'GT Walsheim Pro' }}
+            placeholder='Filter by Date'
           />
           
           <Select
-            value={area}
+            value={area || undefined}
             onChange={handleAreaChange}
-            placeholder="Select Area"
+            placeholder="Filter by Area"
             style={{
               width: 160,
               border: "1px solid var(--stroke-grey-subtle, #DDDDE3)",
               background: "var(--surface-background-white, #FFF)",
-              fontFamily: 'GT Walsheim Pro'
+              fontFamily: 'GT Walsheim Pro',
+              color:'#000'
             }}
           >
             {areas.map((a, idx) => (
@@ -166,14 +168,15 @@ const Flag = () => {
             ))}
           </Select>
           <Select
-            value={parameter}
+            value={parameter || undefined}
             onChange={setParameter}
-            placeholder="Select Parameter"
+            placeholder="Filter by Condition"
             style={{
               width: 160,
               border: "1px solid var(--stroke-grey-subtle, #DDDDE3)",
               background: "var(--surface-background-white, #FFF)",
-              fontFamily: 'GT Walsheim Pro'
+              fontFamily: 'GT Walsheim Pro',
+              color: '#000'
             }}
           >
             <Option value="Loading">Loading</Option>

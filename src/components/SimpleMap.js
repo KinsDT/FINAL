@@ -318,8 +318,9 @@ const SimpleMap = ({ markers = [], parameter, centerTrigger }) => {
                 {/* ✅ Additional metadata */}
                 {extra && (
                   <>
+                    <span>DT Name: {extra.dt_name?.split('-')[0]}</span><br/>
                     <span>DT Code: {extra.dt_code}</span><br />
-                    <span>DT Capacity: {extra.dt_capacity}</span><br />
+                    <span>DT Capacity: {extra.dt_capacity} kVA</span><br />
                   </>
                 )}
 
