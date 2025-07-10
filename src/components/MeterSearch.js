@@ -103,7 +103,7 @@ export default function MeterSearch() {
     voltage_sag_swell_template: "Voltage Sag Swell",
     operational_template: "Operational",
     block_wise_qos_template: "Quality of Supply",
-    "": ""
+    loading: "Loading"
   };
 
   const columnDisplayNames = {
@@ -111,13 +111,14 @@ export default function MeterSearch() {
     meter_id: "Meter ID",
     block_name: "Block Name",
     block: "Block",
-    voltage_pha: "voltage_pha",
-    voltage_phb: "voltage_phb",
-    voltage_phc: "voltage_phc",
-    v1: "v1",
-    v2: "v2",
-    v3: "v3",
-    vuf: "vuf",
+    voltage_pha: "R - phase Voltage",
+    voltage_phb: "Y - phase Voltage",
+    voltage_phc: "B - phase Voltage",
+    
+    v1: "Positive Sequence Voltage (V1)",
+    v2: "Negative Sequence Voltage (V2)",
+    v0: "Zero Sequence Voltage (V0)",
+    vuf: "Voltage Unbalance Factor",
     datetime: "Date Time",
     pfavg3ph: "PF Avg 3 Phase",
     pfph_a:"PF - R Phase",
@@ -133,8 +134,58 @@ export default function MeterSearch() {
     va_max_percent: "Max Voltage Variation - R Phase (%)",
     vb_max_percent: "Max Voltage Variation - Y Phase (%)",
     vc_max_percent: "Max Voltage Variation - B Phase (%)",
+    cut_count:"Cut Count",
+    cut_duration: "Cut Duration (mins)",
+    outage_count: "Outage Count",
+    outage_duration: "Outage Duration (mins)",
+    occurrence_time: "Occurrence Time",
+    restoration_time: "Restoration Time",
+    cum_eimport_kvah: "Cumulative Energy Import (kVAh)",
+    cum_eexport_kvah: "Cumulative Energy Export (kVAh)",
+    load: "Load (kVA)",
+    dt_capacity: "DT Capacity (kVA)",
+    percentage_load: "Percentage Load (%)",
+    ct_vt_ratio: "CT/VT Ratio",
+    final_load: "Final Load (kVA)",
 
-
+    area: "Area",
+    saifi_cons: "SAIFI (Consumer)",
+    saidi_cons: "SAIDI (Consumer)",
+    caifi_cons: "CAIFI (Consumer)",
+    caidi_cons: "CAIDI (Consumer)",
+    ciii_cons: "CIII (Consumer)",
+    asai_cons: "ASAI (Consumer)",
+    maifi_cons: "MAIFI (Consumer)",
+    maidi_cons: "MAIDI (Consumer)",
+    saifi_load: "SAIFI (Load)",
+    saidi_load: "SAIDI (Load)",
+    caifi_load: "CAIFI (Load)",
+    caidi_load: "CAIDI (Load)",
+    ciii_load: "CIII (Load)",
+    asai_load: "ASAI (Load)",
+    maifi_load: "MAIFI (Load)",
+    maidi_load: "MAIDI (Load)",
+    ens: "ENS (kWh)",
+    aens: "AENS (kWh)",
+    ors: "Overall Reliability of System (%)",
+    ca:"R - Phase Consumers",
+    cb:"Y - Phase Consumers",
+    cc:"B - Phase Consumers",
+    la: "R - Phase Load (kVA)",
+    lb: "Y - Phase Load (kVA)",
+    lc: "B - Phase Load (kVA)",
+    na:"R - Phase Outage Count",
+    nb:"Y - Phase Outage Count",
+    nc:"B - Phase Outage Count",
+    da:"R - Phase Outage Duration (mins)",
+    db:"Y - Phase Outage Duration (mins)",
+    dc:"B - Phase Outage Duration (mins)",
+    ma:"R -Phase Cut Count",
+    mb:"Y - Phase Cut Count",
+    mc:"B - Phase Cut Count",
+    ta: "R - Phase Cut Duration (mins)",
+    tb: "Y - Phase Cut Duration (mins)",
+    tc: "B - Phase Cut Duration (mins)",
   };
 
   const fetchData = async () => {
@@ -228,7 +279,6 @@ export default function MeterSearch() {
     ...(hasDatetime ? ["datetime"] : ["date"]),
     ...(hasDatetime ? [] : ["block"]),
     ...(hasDatetime ? [] : ["block_name"]),
-    
     "pfavg3ph", "pfph_a", "pfph_b", "pfph_c",
     "voltage_pha", "voltage_phb", "voltage_phc",
     "v3ph_avg_percent", "va_avg_percent", "vb_avg_percent", "vc_avg_percent",
@@ -236,11 +286,19 @@ export default function MeterSearch() {
     "v1", "v2", "v3", "vuf"
   ];
 
-  // Remove "date" and "block" from prioritized if "datetime" exists
-  const filteredPrioritized = prioritized.filter(col => allCols.includes(col));
+  // Remove "date", "block", and "block_name" from prioritized if "datetime" exists
+  const filteredPrioritized = prioritized.filter(
+    col =>
+      allCols.includes(col) &&
+      (!hasDatetime || (col !== "date" && col !== "block" && col !== "block_name"))
+  );
 
-  // Find other columns
-  const otherCols = allCols.filter((c) => !filteredPrioritized.includes(c));
+  // Find other columns, EXCLUDING "date", "block", and "block_name" if "datetime" exists
+  const otherCols = allCols.filter(
+    c =>
+      !filteredPrioritized.includes(c) &&
+      (!hasDatetime || (c !== "date" && c !== "block" && c !== "block_name"))
+  );
 
   // Count non-null values for other columns
   const counts = otherCols.map((col) => {
@@ -257,6 +315,7 @@ export default function MeterSearch() {
   // Return prioritized + sorted other columns
   return [...filteredPrioritized, ...counts.map((c) => c.col)];
 };
+
 
 
   const columns = getColumnsByNonNullCount(data);
@@ -396,14 +455,14 @@ function truncateId(id, maxLength = 8) {
             </div>
             <div style={{ marginBottom: 32 }}>
               <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
-                Meters / Transformers
+                Area / Transformers
               </label>
               <div style={{display:'flex',gap: 0 }}>
                 <Select
                   className="subdivision-select"
                   value={selectedArea || undefined}
                   onChange={value => setSelectedArea(value)}
-                  placeholder="Select Sub-division / Region"
+                  placeholder="Select Area"
                   style={{
                     height: "36px",
                     lineHeight: "36px",
@@ -431,7 +490,7 @@ function truncateId(id, maxLength = 8) {
                   mode="multiple"
                   allowClear
                   showSearch
-                  placeholder="Select Meter(s) / Transformer(s)"
+                  placeholder="Select Transformer(s)"
                   value={selectedMeterIds}
                   onChange={setSelectedMeterIds}
                   style={{
@@ -811,9 +870,18 @@ function truncateId(id, maxLength = 8) {
                     <thead>
                       <tr>
                         {columns.map((col) => (
-                          <th key={col} className="th">
-                            {columnDisplayNames[col] || col}
-                          </th>
+                         <th
+  key={col}
+  className={
+    col === "meter_id"
+      ? "sticky-meter th"
+      : col === "datetime" || col === "date"
+      ? "sticky-datetime th sticky-shadow"
+      : "th"
+  }
+>
+  {columnDisplayNames[col] || col}
+</th>
                         ))}
                       </tr>
                     </thead>
@@ -823,23 +891,35 @@ function truncateId(id, maxLength = 8) {
                           {columns.map((col) => {
                             const val = row[col];
                             return (
-                              <td key={col} className={`td${col === "date" ? " td-date" : ""}`}>
-                                {col === "date" && val
-                                  ? (() => {
-                                      const d = new Date(val);
-                                      const day = d.getDate().toString().padStart(2, '0');
-                                      const month = d.toLocaleString('en-GB', { month: 'short' });
-                                      const year = d.getFullYear();
-                                      return `${day} ${month} ${year}`;
-                                    })()
-                                  : (col.toLowerCase() === "time stamp" || col.toLowerCase() === "datetime") && val
-                                  ?  
-                                    new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) + ", " +
-                                    new Date(val).toLocaleTimeString("en-GB", { hour12: false })
-                                    : val === null || val === undefined
-                                  ? "-"
-                                  : val.toString()}
-                              </td>
+                              <td
+  key={col}
+  className={
+    col === "meter_id"
+      ? "sticky-meter td"
+      : col === "datetime" || col === "date"
+      ? "sticky-datetime td sticky-shadow"
+      : col === "block" || col === "block_name"
+      ? "sticky-block td"
+      : "td"
+  }
+>
+  {col === "date" && val
+    ? (() => {
+        const d = new Date(val);
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = d.toLocaleString('en-GB', { month: 'short' });
+        const year = d.getFullYear();
+        return `${day} ${month} ${year}`;
+      })()
+    : (col.toLowerCase() === "time stamp" || col.toLowerCase() === "datetime") && val
+    ?  
+      new Date(val).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) + ", " +
+      new Date(val).toLocaleTimeString("en-GB", { hour12: false })
+    : val === null || val === undefined
+    ? "-"
+    : val.toString()}
+</td>
+
                             );
                           })}
                         </tr>
