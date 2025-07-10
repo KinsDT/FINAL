@@ -47,14 +47,14 @@ export default function MainContent({
   fontWeight: 500,
   lineHeight: "normal"
 }
-}>Satellite Map of Meter Locations</h1>
+}>DT Performance Map</h1>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <label style={{ fontWeight: 600,fontFamily:'GT Walsheim Pro' }}></label>
           <Select
             value={selectedArea}
             onChange={value => setSelectedArea(value)}
-            placeholder="Select area"
+            placeholder="Filter by Area"
             style={{ 
   border: "1px solid var(--stroke-grey-subtle, #DDDDE3)",
   background: "var(--surface-background-white, #FFF)",
@@ -78,7 +78,7 @@ export default function MainContent({
   fontFamily:'GT Walsheim Pro'
 }
 }
-            placeholder="Select parameter"
+            placeholder="Filter by Monitoring Parameter"
           >
             {parameterOptions.map((param) => (
               <Option key={param} value={param}>{param}</Option>

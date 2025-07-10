@@ -336,7 +336,7 @@ export default function MeterSearch() {
   return `${day}/${month}/${year}`;
 }
 
-function truncateId(id, maxLength = 4) {
+function truncateId(id, maxLength = 8) {
   if (!id) return "";
   return id.length > maxLength ? id.slice(0, maxLength) + "..." : id;
 }
@@ -456,7 +456,7 @@ function truncateId(id, maxLength = 4) {
             </div>
             <div style={{ marginBottom: 32 }}>
               <label style={{ fontWeight: 500, fontSize: 16, marginBottom: 10, display: "block", color: "#27272A" }}>
-                Dates
+                Date Range
               </label>
               <div style={{ display: "flex", gap: 0 }}>
                 <input
@@ -611,25 +611,23 @@ function truncateId(id, maxLength = 4) {
   }}
 >
   <div>
-    <div style={{ color: "#B0B0B0", marginBottom: 2 }}>Parameter Name</div>
+    <div style={{ color: "#B0B0B0", marginBottom: 2 }}>Monitoring Parameter</div>
     <div style={{ color: "#27272A", fontWeight: 500}}>
       {tableDisplayNames[tableName] || tableName}
     </div>
   </div>
   <div>
-    <div style={{ color: "#B0B0B0",  marginBottom: 2 }}>Sub-division</div>
+    <div style={{ color: "#B0B0B0",  marginBottom: 2 }}>Sub-division / Region</div>
     <div style={{ color: "#27272A", fontWeight: 500}}>
       {selectedArea}
     </div>
   </div>
   <div>
-  <div style={{ color: "#B0B0B0",  marginBottom: 2 }}>Meter IDs</div>
+  <div style={{ color: "#B0B0B0",  marginBottom: 2 }}>Meter / Transformer </div>
   <div style={{ color: "#27272A", fontWeight: 500, display: "flex", alignItems: "center" }}>
   {selectedMeterIds.length === 1 && selectedMeterIds[0]}
   {selectedMeterIds.length > 1 && (
     <>
-      {selectedMeterIds[0]}
-      {", "}
       {truncateId(selectedMeterIds[1])}
       <button
         style={{
@@ -684,7 +682,7 @@ function truncateId(id, maxLength = 4) {
       background: "transparent",
       border: "none",
       outline: "none",
-      fontSize: 16,
+      fontSize: 12,
       fontWeight: 600,
       color: viewMode === "table" ? "#1773BE" : "#27272A",
       borderRadius: 8,
@@ -712,7 +710,7 @@ function truncateId(id, maxLength = 4) {
       background: "transparent",
       border: "none",
       outline: "none",
-      fontSize: 16,
+      fontSize: 12,
       fontWeight: 600,
       color: viewMode === "graph" ? "#1773BE" : "#27272A",
       borderRadius: 8,
