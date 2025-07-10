@@ -227,7 +227,8 @@ export default function MeterSearch() {
     "meter_id",
     ...(hasDatetime ? ["datetime"] : ["date"]),
     ...(hasDatetime ? [] : ["block"]),
-    "block_name",
+    ...(hasDatetime ? [] : ["block_name"]),
+    
     "pfavg3ph", "pfph_a", "pfph_b", "pfph_c",
     "voltage_pha", "voltage_phb", "voltage_phc",
     "v3ph_avg_percent", "va_avg_percent", "vb_avg_percent", "vc_avg_percent",
