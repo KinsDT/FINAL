@@ -169,20 +169,21 @@ export default function MeterMappingCrud() {
     { title: "To Date", dataIndex: "to_date", key: "to_date" },
     { title: "MF", dataIndex: "mf", key: "mf" },
     {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <>
-          <Button size="small" onClick={() => openEdit(record)}>Edit</Button>
-          <Popconfirm
-            title="Delete this record?"
-            onConfirm={() => handleDelete(record.meter_id, record.time_interval)}
-          >
-            <Button size="small" danger style={{ marginLeft: 8 }}>Delete</Button>
-          </Popconfirm>
-        </>
-      ),
-    },
+    title: "Actions",
+    key: "actions",
+    width: 300, // You can adjust this value as needed
+    render: (_, record) => (
+      <>
+        <Button size="small" onClick={() => openEdit(record)}>Edit</Button>
+        <Popconfirm
+          title="Delete this record?"
+          onConfirm={() => handleDelete(record.meter_id, record.time_interval)}
+        >
+          <Button size="small" danger style={{ marginTop:8,marginLeft:0 }}>Delete</Button>
+        </Popconfirm>
+      </>
+    ),
+  },
   ];
 
   return (
