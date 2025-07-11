@@ -25,21 +25,21 @@ const initialForm = {
 
 export default function MeterMappingCrud() {
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);  // This will hold the filtered data based on the search
-  const [areas, setAreas] = useState([]); // This will hold unique areas for the Select dropdown
+  const [filteredData, setFilteredData] = useState([]);
+  const [areas, setAreas] = useState([]);
   const [form] = Form.useForm();
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editingKeys, setEditingKeys] = useState({});
-  const [searchTerm, setSearchTerm] = useState(''); // To hold the search term
-  const [selectedArea, setSelectedArea] = useState(''); // To hold the selected area for filtering
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedArea, setSelectedArea] = useState('');
 
   // Fetch all records
   const fetchAll = async () => {
     const res = await fetch(apiBase);
     const json = await res.json();
     setData(json);
-    setFilteredData(json); // Initialize filtered data with all records
+    setFilteredData(json);
 
     // Extract unique areas for the Select dropdown
     const uniqueAreas = [...new Set(json.map(record => record.area))];
@@ -54,24 +54,20 @@ export default function MeterMappingCrud() {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    
-    // Filter data by meter_id and selected area
     filterData(value, selectedArea);
   };
 
   // Handle Area Change
   const handleAreaChange = (value) => {
     setSelectedArea(value);
-    
-    // Filter data by selected area and meter_id search term
     filterData(searchTerm, value);
   };
 
   // Filter data based on search term and selected area
   const filterData = (searchTerm, selectedArea) => {
-    const filtered = data.filter(record => 
+    const filtered = data.filter(record =>
       record.meter_id.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedArea ? record.area === selectedArea : true) // Apply area filter only if selected
+      (selectedArea ? record.area === selectedArea : true)
     );
     setFilteredData(filtered);
   };
@@ -79,20 +75,14 @@ export default function MeterMappingCrud() {
   // Add or Update
   const handleOk = async () => {
     try {
-      // Validate form fields
       const values = await form.validateFields();
-      
-      // Log the values to check the request body
-      console.log('Form Values:', values);
-      
-      // Convert empty string values to null for numeric fields (if needed)
+
       Object.keys(values).forEach(key => {
         if (typeof values[key] === 'string' && values[key] === '') {
-          values[key] = null; // Convert empty strings to null for numeric fields
+          values[key] = null;
         }
       });
 
-      // Send the request based on whether it's an edit or add
       const response = await fetch(apiBase, {
         method: editing ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
@@ -104,7 +94,7 @@ export default function MeterMappingCrud() {
         setModalOpen(false);
         setEditing(false);
         form.resetFields();
-        fetchAll();  // Refresh data
+        fetchAll();
       } else {
         const data = await response.json();
         message.error(data.error || "Failed to add record");
@@ -137,12 +127,11 @@ export default function MeterMappingCrud() {
   // Delete the record
   const handleDelete = async (meter_id, time_interval) => {
     try {
-      // Send DELETE request to the backend
       const response = await fetch(`${apiBase}/${meter_id}/${time_interval}`, { method: "DELETE" });
 
       if (response.ok) {
         message.success("Deleted successfully!");
-        fetchAll();  // Refresh data after deletion
+        fetchAll();
       } else {
         const data = await response.json();
         message.error(data.error || "Failed to delete record");
@@ -171,21 +160,21 @@ export default function MeterMappingCrud() {
     { title: "MF", dataIndex: "mf", key: "mf" },
     { title: "DT Name", dataIndex: "dt_name", key: "dt_name" },
     {
-    title: "Actions",
-    key: "actions",
-    width: 300, // You can adjust this value as needed
-    render: (_, record) => (
-      <>
-        <Button size="small" onClick={() => openEdit(record)}>Edit</Button>
-        <Popconfirm
-          title="Delete this record?"
-          onConfirm={() => handleDelete(record.meter_id, record.time_interval)}
-        >
-          <Button size="small" danger style={{ marginTop:8,marginLeft:0 }}>Delete</Button>
-        </Popconfirm>
-      </>
-    ),
-  },
+      title: "Actions",
+      key: "actions",
+      width: 120,
+      render: (_, record) => (
+        <span style={{ display: "flex", gap: 8 }}>
+          <Button size="small" onClick={() => openEdit(record)}>Edit</Button>
+          <Popconfirm
+            title="Delete this record?"
+            onConfirm={() => handleDelete(record.meter_id, record.time_interval)}
+          >
+            <Button size="small" danger>Delete</Button>
+          </Popconfirm>
+        </span>
+      ),
+    },
   ];
 
   return (
@@ -215,14 +204,28 @@ export default function MeterMappingCrud() {
         style={{ marginBottom: 16, width: 200 }}
       />
 
-      <Button type="primary" onClick={openAdd} style={{ marginLeft:495,marginBottom: 16 }}>Add Record</Button>
+      <Button type="primary" onClick={openAdd} style={{ marginLeft: 495, marginBottom: 16 }}>Add Record</Button>
       
-      <Table
-        rowKey={r => r.meter_id + "-" + r.time_interval}
-        dataSource={filteredData} // Use the filtered data instead of original data
-        columns={columns}
-        scroll={{ x: 1200 }}
-      />
+      {/* Outer border wrapper */}
+      <div
+        style={{
+          border: '2px solid #f5f5f5',
+          zIndex: 2,
+          borderRadius: 6,
+          overflow: 'hidden',
+          marginTop: 16,
+          background: '#fff', // optional: to match AntD table bg
+        }}
+      >
+        <Table
+          rowKey={r => r.meter_id + "-" + r.time_interval}
+          dataSource={filteredData}
+          columns={columns}
+          scroll={{ x: 1200 }}
+          bordered
+          pagination={{ pageSize: 10 }}
+        />
+      </div>
 
       <Modal
         open={modalOpen}
