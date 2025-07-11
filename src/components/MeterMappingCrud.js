@@ -24,57 +24,74 @@ const initialForm = {
 
 export default function MeterMappingCrud() {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);  // This will hold the filtered data based on the search
   const [form] = Form.useForm();
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editingKeys, setEditingKeys] = useState({});
+  const [searchTerm, setSearchTerm] = useState(''); // To hold the search term
 
   // Fetch all records
   const fetchAll = async () => {
     const res = await fetch(apiBase);
     const json = await res.json();
     setData(json);
+    setFilteredData(json); // Initialize filtered data with all records
   };
 
   useEffect(() => {
     fetchAll();
   }, []);
 
+  // Handle Search Input Change
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    
+    // Filter data by meter_id
+    const filtered = data.filter(record =>
+      record.meter_id.toLowerCase().includes(value.toLowerCase())
+    );
+    
+    setFilteredData(filtered);
+  };
+
   // Add or Update
   const handleOk = async () => {
     try {
+      // Validate form fields
       const values = await form.validateFields();
-      if (editing) {
-        // Update
-        await fetch(`${apiBase}/${editingKeys.meter_id}/${editingKeys.time_interval}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
-        });
-        message.success("Updated!");
+      
+      // Log the values to check the request body
+      console.log('Form Values:', values);
+      
+      // Convert empty string values to null for numeric fields (if needed)
+      Object.keys(values).forEach(key => {
+        if (typeof values[key] === 'string' && values[key] === '') {
+          values[key] = null; // Convert empty strings to null for numeric fields
+        }
+      });
+
+      // Send the request based on whether it's an edit or add
+      const response = await fetch(apiBase, {
+        method: editing ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        message.success(editing ? "Updated!" : "Added!");
+        setModalOpen(false);
+        setEditing(false);
+        form.resetFields();
+        fetchAll();  // Refresh data
       } else {
-        // Add
-        await fetch(apiBase, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(values),
-        });
-        message.success("Added!");
+        const data = await response.json();
+        message.error(data.error || "Failed to add record");
       }
-      setModalOpen(false);
-      setEditing(false);
-      form.resetFields();
-      fetchAll();
     } catch (err) {
       message.error("Error: " + err.message);
     }
-  };
-
-  // Delete
-  const handleDelete = async (meter_id, time_interval) => {
-    await fetch(`${apiBase}/${meter_id}/${time_interval}`, { method: "DELETE" });
-    message.success("Deleted!");
-    fetchAll();
   };
 
   // Open modal for editing
@@ -95,6 +112,24 @@ export default function MeterMappingCrud() {
     setEditingKeys({});
     form.resetFields();
     setModalOpen(true);
+  };
+
+  // Delete the record
+  const handleDelete = async (meter_id, time_interval) => {
+    try {
+      // Send DELETE request to the backend
+      const response = await fetch(`${apiBase}/${meter_id}/${time_interval}`, { method: "DELETE" });
+
+      if (response.ok) {
+        message.success("Deleted successfully!");
+        fetchAll();  // Refresh data after deletion
+      } else {
+        const data = await response.json();
+        message.error(data.error || "Failed to delete record");
+      }
+    } catch (err) {
+      message.error("Error: " + err.message);
+    }
   };
 
   // Table columns
@@ -134,8 +169,23 @@ export default function MeterMappingCrud() {
   return (
     <div style={{ padding: 24 }}>
       <h2>Meter Mapping Management</h2>
+      
+      {/* Search Input */}
+      <Input
+        placeholder="Search by Meter ID"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        style={{ marginBottom: 16, width: 200 }}
+      />
+
       <Button type="primary" onClick={openAdd} style={{ marginBottom: 16 }}>Add Record</Button>
-      <Table rowKey={r => r.meter_id + "-" + r.time_interval} dataSource={data} columns={columns} scroll={{ x: 1200 }} />
+      
+      <Table
+        rowKey={r => r.meter_id + "-" + r.time_interval}
+        dataSource={filteredData} // Use the filtered data instead of original data
+        columns={columns}
+        scroll={{ x: 1200 }}
+      />
 
       <Modal
         open={modalOpen}
