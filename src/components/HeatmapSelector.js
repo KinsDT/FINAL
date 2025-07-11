@@ -6,7 +6,7 @@ const options = [
   { label: 'Max', value: 'max' },
   { label: 'Min', value: 'min' },
   { label: 'Avg', value: 'avg' },
-  { label: 'Standard Deviation', value: 'stddev' },
+  { label: 'STDev', value: 'stddev' },
 ];
 
 export default function HeatmapSelector({ selected, onChange }) {
