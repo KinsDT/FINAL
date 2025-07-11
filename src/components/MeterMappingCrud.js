@@ -20,6 +20,7 @@ const initialForm = {
   from_date: "",
   to_date: "",
   mf: "",
+  dt_name: "",
 };
 
 export default function MeterMappingCrud() {
@@ -168,6 +169,7 @@ export default function MeterMappingCrud() {
     { title: "From Date", dataIndex: "from_date", key: "from_date" },
     { title: "To Date", dataIndex: "to_date", key: "to_date" },
     { title: "MF", dataIndex: "mf", key: "mf" },
+    { title: "DT Name", dataIndex: "dt_name", key: "dt_name" },
     {
     title: "Actions",
     key: "actions",
@@ -241,6 +243,7 @@ export default function MeterMappingCrud() {
           <Form.Item name="long" label="Longitude"><InputNumber style={{ width: "100%" }} /></Form.Item>
           <Form.Item name="dt_code" label="DT Code"><Input /></Form.Item>
           <Form.Item name="dt_capacity" label="DT Capacity"><InputNumber style={{ width: "100%" }} /></Form.Item>
+          <Form.Item name="dt_name" label="DT Name"><Input /></Form.Item>
           <Form.Item name="e_ct_primary" label="E CT Primary"><InputNumber style={{ width: "100%" }} /></Form.Item>
           <Form.Item name="e_ct_secondary" label="E CT Secondary"><InputNumber style={{ width: "100%" }} /></Form.Item>
           <Form.Item name="m_ct_primary" label="M CT Primary"><InputNumber style={{ width: "100%" }} /></Form.Item>
