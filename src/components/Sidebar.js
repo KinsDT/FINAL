@@ -7,6 +7,7 @@ import { ReactComponent as TelescopeIcon } from '../assets/telescope.svg';
 import { ReactComponent as MapIcon } from '../assets/map.svg';
 import { ReactComponent as MeterIcon } from '../assets/meter.svg';
 import {ReactComponent as FlagIcon} from '../assets/flag.svg';
+import {ReactComponent as BookIcon} from '../assets/book.svg';
 const ICON_SIZE = 20;
 const ACTIVE_COLOR = "#1773BE"; 
 const INACTIVE_COLOR = "#fff";  
@@ -148,7 +149,7 @@ export default function Sidebar() {
 <Button
   type="text"
   icon={
-    <FlagIcon
+    <BookIcon
       width={ICON_SIZE}
       height={ICON_SIZE}
       style={{ marginRight: 8, 
