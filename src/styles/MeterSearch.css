@@ -652,8 +652,53 @@ input:checked + .slider:before {
   cursor: pointer;
 }
 
+th.sticky-meter {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: #F5F5FA; /* Example: light blue for header */
+}
 
+/* Sticky Meter ID cell */
+td.sticky-meter {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #FFF; /* Example: light gray for cell */
+}
 
+/* Sticky Date/Datetime header */
+th.sticky-datetime {
+  position: sticky;
+  left: 115px; /* Adjust based on Meter ID column width */
+  z-index: 3;
+  background: #F5F5FA; /* Example: different blue for header */
+}
+
+/* Sticky Date/Datetime cell */
+td.sticky-datetime {
+  position: sticky;
+  left: 115px; /* Adjust as needed */
+  z-index: 2;
+  background: #FFF; /* Example: white for cell */
+}
+
+.sticky-shadow {
+  filter: drop-shadow(2px 0 8px -2px rgba(226, 114, 9, 0.15));
+}
+th.sticky-block{
+  position: sticky;
+  left: 225px; /* Adjust based on Meter ID and Date/Datetime column widths */
+  z-index: 3;
+  background: #F5F5FA; /* Example: light blue for header */
+}
+
+td.sticky-block{
+  position: sticky;
+  left: 225px; /* Adjust based on Meter ID and Date/Datetime column widths */
+  z-index: 3;
+  background: #fff; /* Example: light blue for header */
+}
 /* Prevent overflow from ant-layout */
 
  
