@@ -84,15 +84,15 @@ export default function PowerQualityAggregation({ data,loading }) {
     >
       {/* Phase Voltage Averages */}
       <div className="stat-group">
-        <div className="label">Average Voltage of Phase A</div>
+        <div className="label">Average Voltage of Phase R</div>
         <div className="value">{avgVoltagePhA.toFixed(2)} V</div>
       </div>
       <div className="stat-group">
-        <div className="label">Average Voltage of Phase B</div>
+        <div className="label">Average Voltage of Phase Y</div>
         <div className="value">{avgVoltagePhB.toFixed(2)} V</div>
       </div>
       <div className="stat-group">
-        <div className="label">Average Voltage of Phase C</div>
+        <div className="label">Average Voltage of Phase B</div>
         <div className="value">{avgVoltagePhC.toFixed(2)} V</div>
       </div>
 

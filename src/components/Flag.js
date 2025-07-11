@@ -144,14 +144,7 @@ const Flag = () => {
         </h1>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <DatePicker
-            format="DD/MM/YYYY"
-            onChange={(d) => setDate(d)}
-            style={{ width: 140,fontFamily: 'GT Walsheim Pro' }}
-            placeholder='Filter by Date'
-          />
-          
-          <Select
+            <Select
             value={area || undefined}
             onChange={handleAreaChange}
             placeholder="Filter by Area"
@@ -167,6 +160,14 @@ const Flag = () => {
               <Option key={idx} value={a}>{a}</Option>
             ))}
           </Select>
+          <DatePicker
+            format="DD/MM/YYYY"
+            onChange={(d) => setDate(d)}
+            style={{ width: 140,fontFamily: 'GT Walsheim Pro' }}
+            placeholder='Filter by Date'
+          />
+          
+          
           <Select
             value={parameter || undefined}
             onChange={setParameter}

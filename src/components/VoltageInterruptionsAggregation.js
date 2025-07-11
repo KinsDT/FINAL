@@ -93,6 +93,10 @@ const maxOutageDuration = outageDurationFiltered.reduce((max, row) => {
           <div className="label">Total Cut Count</div>
           <div className="value">{totalCutCount} events</div>
         </div>
+        <div className="stat-group">
+          <div className="label">Records with Cut Events</div>
+          <div className="value">{cutDurationFiltered.length} of {data.length}</div>
+        </div>
 
         {/* Outage Duration Analysis */}
         <div className="stat-group">
@@ -109,10 +113,7 @@ const maxOutageDuration = outageDurationFiltered.reduce((max, row) => {
         </div>
 
         {/* Summary Statistics */}
-        <div className="stat-group">
-          <div className="label">Records with Cut Events</div>
-          <div className="value">{cutDurationFiltered.length} of {data.length}</div>
-        </div>
+        
         <div className="stat-group">
           <div className="label">Records with Outage Events</div>
           <div className="value">{outageDurationFiltered.length} of {data.length}</div>
