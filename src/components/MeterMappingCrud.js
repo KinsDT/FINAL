@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Input, InputNumber, DatePicker, message, Popconfirm } from "antd";
+import { Table, Button, Modal, Form, Input, InputNumber, DatePicker, message, Popconfirm, Select } from "antd";
 import dayjs from "dayjs";
 
 const apiBase = "http://localhost:5000/api/meter-mapping-crud";
@@ -25,11 +25,13 @@ const initialForm = {
 export default function MeterMappingCrud() {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);  // This will hold the filtered data based on the search
+  const [areas, setAreas] = useState([]); // This will hold unique areas for the Select dropdown
   const [form] = Form.useForm();
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editingKeys, setEditingKeys] = useState({});
   const [searchTerm, setSearchTerm] = useState(''); // To hold the search term
+  const [selectedArea, setSelectedArea] = useState(''); // To hold the selected area for filtering
 
   // Fetch all records
   const fetchAll = async () => {
@@ -37,6 +39,10 @@ export default function MeterMappingCrud() {
     const json = await res.json();
     setData(json);
     setFilteredData(json); // Initialize filtered data with all records
+
+    // Extract unique areas for the Select dropdown
+    const uniqueAreas = [...new Set(json.map(record => record.area))];
+    setAreas(uniqueAreas);
   };
 
   useEffect(() => {
@@ -48,11 +54,24 @@ export default function MeterMappingCrud() {
     const value = e.target.value;
     setSearchTerm(value);
     
-    // Filter data by meter_id
-    const filtered = data.filter(record =>
-      record.meter_id.toLowerCase().includes(value.toLowerCase())
-    );
+    // Filter data by meter_id and selected area
+    filterData(value, selectedArea);
+  };
+
+  // Handle Area Change
+  const handleAreaChange = (value) => {
+    setSelectedArea(value);
     
+    // Filter data by selected area and meter_id search term
+    filterData(searchTerm, value);
+  };
+
+  // Filter data based on search term and selected area
+  const filterData = (searchTerm, selectedArea) => {
+    const filtered = data.filter(record => 
+      record.meter_id.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (selectedArea ? record.area === selectedArea : true) // Apply area filter only if selected
+    );
     setFilteredData(filtered);
   };
 
@@ -168,7 +187,22 @@ export default function MeterMappingCrud() {
 
   return (
     <div style={{ padding: 24 }}>
-      <h2>Meter Mapping Management</h2>
+      <h2>DT Mapping Management</h2>
+      
+      {/* Area Selector */}
+      <Select
+        placeholder="Select Area"
+        style={{ width: 200, marginBottom: 16, marginRight: 16 }}
+        onChange={handleAreaChange}
+        value={selectedArea}
+      >
+        <Select.Option value="">All Areas</Select.Option>
+        {areas.map(area => (
+          <Select.Option key={area} value={area}>
+            {area}
+          </Select.Option>
+        ))}
+      </Select>
       
       {/* Search Input */}
       <Input
@@ -178,7 +212,7 @@ export default function MeterMappingCrud() {
         style={{ marginBottom: 16, width: 200 }}
       />
 
-      <Button type="primary" onClick={openAdd} style={{ marginBottom: 16 }}>Add Record</Button>
+      <Button type="primary" onClick={openAdd} style={{ marginLeft:495,marginBottom: 16 }}>Add Record</Button>
       
       <Table
         rowKey={r => r.meter_id + "-" + r.time_interval}
